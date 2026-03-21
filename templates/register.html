@@ -1,15 +1,25 @@
 {% extends "layout.html" %}
 
-{% block title %}Profile{% endblock %}
-
-{% block navbar %}
-    {% include "navbar.html" %}
-{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block content %}
-<h1>Profile</h1>
+<div class="auth-container">
+    <h1>Register</h1>
 
-<p>Username: {{ current_user }}</p>
+    <form method="POST">
+    <label>Username:</label><br>
+    <input type="text" name="username" required><br><br>
 
-<a href="/">Logout</a>
+    <label>Email:</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>Password:</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <button type="submit">Register</button>
+    </form>
+
+    <p>Already have an account?</p>
+    <a href="/">Login</a>
+</div>
 {% endblock %}

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -17,7 +17,6 @@ def init_db():
     conn = get_db()
     cur = conn.cursor()
 
-    # USERS
     cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,81 +24,69 @@ def init_db():
         email TEXT,
         password TEXT,
         balance REAL DEFAULT 0,
-        savings REAL DEFAULT 0,
-        streak INTEGER DEFAULT 0,
-        last_active TEXT
+        savings REAL DEFAULT 0
     )
     """)
 
-    # EXPENSES
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expenses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         amount REAL,
         category TEXT,
-        date TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        date TEXT
     )
     """)
 
-    # INCOME
     cur.execute("""
     CREATE TABLE IF NOT EXISTS income (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         amount REAL,
         saved REAL,
-        date TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        date TEXT
     )
     """)
 
-    # GOALS
     cur.execute("""
     CREATE TABLE IF NOT EXISTS goals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         target REAL,
-        current REAL,
-        completed INTEGER,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        current REAL DEFAULT 0,
+        completed INTEGER DEFAULT 0
     )
     """)
 
-    # SUBSCRIPTIONS
     cur.execute("""
     CREATE TABLE IF NOT EXISTS subscriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         name TEXT,
-        cost REAL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        cost REAL
     )
     """)
 
-    # TODO
     cur.execute("""
     CREATE TABLE IF NOT EXISTS todo (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
-        text TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        text TEXT
     )
     """)
 
     conn.commit()
     conn.close()
 
+
 # ---------------- HELPERS ----------------
 def get_user_id(username):
     conn = get_db()
     user = conn.execute(
-        "SELECT id FROM users WHERE username = ?",
+        "SELECT id FROM users WHERE username=?",
         (username,)
     ).fetchone()
     conn.close()
-
     return user["id"] if user else None
 
 
@@ -108,15 +95,10 @@ def inject_user():
     username = request.view_args.get("username") if request.view_args else None
     return dict(current_user=username)
 
-# ---------------- STREAK ----------------
-def update_streak():
-    # simplified for now (no DB user tracking yet)
-    pass
-
 
 # ---------------- ROUTES ----------------
 
-# LOGIN PAGE
+# INDEX
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -176,7 +158,6 @@ def register():
 @app.route("/dashboard/<username>")
 def dashboard(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
@@ -192,31 +173,40 @@ def dashboard(username):
         (user_id,)
     ).fetchall()
 
-    subscriptions = conn.execute(
+    subs = conn.execute(
         "SELECT * FROM subscriptions WHERE user_id=?",
         (user_id,)
     ).fetchall()
 
+    total_exp = sum([e["amount"] for e in expenses])
+    total_inc = sum([i["amount"] for i in income])
+    sub_cost = sum([s["cost"] for s in subs])
+
     conn.close()
 
-    return render_template("dashboard.html", username=username, expenses=expenses, income=income, subscriptions=subscriptions)
+    return render_template(
+        "dashboard.html",
+        username=username,
+        expenses=total_exp,
+        income=total_inc,
+        subscriptions=sub_cost
+    )
 
 
 # EXPENSES
 @app.route("/expenses/<username>", methods=["GET", "POST"])
 def expenses(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
-    conn = get_db()  # ✅ MOVE THIS HERE (before POST)
+    conn = get_db()
 
     if request.method == "POST":
         amount = request.form.get("amount")
         category = request.form.get("category")
 
-        if amount and category:
+        if amount is not None and category:
             conn.execute(
                 "INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)",
                 (user_id, float(amount), category, datetime.utcnow().isoformat())
@@ -229,14 +219,13 @@ def expenses(username):
     ).fetchall()
 
     conn.close()
-
     return render_template("expenses.html", data=data, username=username)
+
 
 # INCOME
 @app.route("/income/<username>", methods=["GET", "POST"])
 def income(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
@@ -246,7 +235,7 @@ def income(username):
         amount = request.form.get("amount")
         saved = request.form.get("saved")
 
-        if amount and saved:
+        if amount is not None and saved is not None:
             conn.execute(
                 "INSERT INTO income (user_id, amount, saved, date) VALUES (?, ?, ?, ?)",
                 (user_id, float(amount), float(saved), datetime.utcnow().isoformat())
@@ -259,14 +248,13 @@ def income(username):
     ).fetchall()
 
     conn.close()
-
     return render_template("income.html", data=data, username=username)
+
 
 # GOALS
 @app.route("/goals/<username>", methods=["GET", "POST"])
 def goals(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
@@ -277,7 +265,7 @@ def goals(username):
 
         if target:
             conn.execute(
-                "INSERT INTO goals (user_id, target, current, completed) VALUES (?, ?, 0, 0)",
+                "INSERT INTO goals (user_id, target) VALUES (?, ?)",
                 (user_id, float(target))
             )
             conn.commit()
@@ -288,14 +276,13 @@ def goals(username):
     ).fetchall()
 
     conn.close()
-
     return render_template("goals.html", data=data, username=username)
+
 
 # SUBSCRIPTIONS
 @app.route("/subscriptions/<username>", methods=["GET", "POST"])
 def subscriptions(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
@@ -305,7 +292,7 @@ def subscriptions(username):
         name = request.form.get("name")
         cost = request.form.get("cost")
 
-        if name and cost:
+        if name and cost is not None:
             conn.execute(
                 "INSERT INTO subscriptions (user_id, name, cost) VALUES (?, ?, ?)",
                 (user_id, name, float(cost))
@@ -318,14 +305,13 @@ def subscriptions(username):
     ).fetchall()
 
     conn.close()
-
     return render_template("subscriptions.html", data=data, username=username)
+
 
 # TODO
 @app.route("/todo/<username>", methods=["GET", "POST"])
 def todo(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
@@ -347,14 +333,13 @@ def todo(username):
     ).fetchall()
 
     conn.close()
-
     return render_template("todo.html", data=data, username=username)
+
 
 # LEARN
 @app.route("/learn/<username>")
 def learn(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
@@ -365,7 +350,6 @@ def learn(username):
 @app.route("/profile/<username>")
 def profile(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
@@ -376,7 +360,7 @@ def profile(username):
     ).fetchone()
     conn.close()
 
-    return render_template("profile.html", username=username, user=user)
+    return render_template("profile.html", user=user, username=username)
 
 
 # ---------------- RUN ----------------
