@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block navbar %}
+    {% include "navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="dashboard-container">
+
+    <!-- BALANCE SECTION -->
+    <div class="card">
+        <h3>Total Income</h3>
+        <p>£{{ income }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Expenses</h3>
+        <p>£{{ expenses }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Subscriptions</h3>
+        <p>£{{ subscriptions }}/month</p>
+    </div>
+
+</div>
+
+<!-- SIMPLE INSIGHTS -->
+<div class="insights">
+    <h2>Insights</h2>
+
+    {% if expenses > income %}
+        <p style="color:red;">⚠️ You spent more than you earned</p>
+    {% else %}
+        <p style="color:green;">✅ You are within your budget</p>
+    {% endif %}
+
+    <p>Monthly subscription cost: £{{ subscriptions }}</p>
+</div>
+
+{% endblock %}
