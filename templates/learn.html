@@ -1,22 +1,21 @@
 {% extends "layout.html" %}
-
 {% block title %}Learn{% endblock %}
-
 {% block navbar %}
     {% include "navbar.html" %}
 {% endblock %}
-
 {% block content %}
 
 {% set pct = ((completed_count / total_count) * 100) | int if total_count and total_count > 0 else 0 %}
 
-<div class="learn-page">
+<div class="container">
 
-    <div class="learn-header">
-        <h1 class="learn-title">Learn 📚</h1>
-        <p class="learn-sub">Click any topic to start. Read the theory, take the quiz, earn XP.</p>
+    <!-- PAGE HEADER -->
+    <div class="dashboard-header">
+        <h1>Learn</h1>
+        <p>Master your money with bite-sized financial guides. Read the theory, take the quiz, earn XP.</p>
     </div>
 
+    <!-- OVERALL PROGRESS -->
     <div class="learn-progress-wrap">
         <div class="learn-progress-label">
             <span>Your progress</span>
@@ -27,218 +26,241 @@
         </div>
     </div>
 
-    <!-- TOPIC CARDS — onclick opens the modal -->
-    <div class="learn-grid">
+    <h3 class="section-title">Course Modules</h3>
 
-        <div class="topic-card {% if completed and completed.saving %}topic-card--done{% endif %}" style="--cat:#F59E0B" onclick="openTopic('saving')">
-            {% if completed and completed.saving %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🐴</div>
-            <h2 class="topic-title">Saving Basics</h2>
-            <p class="topic-desc">Build good saving habits and make your money work harder.</p>
-            <div class="topic-footer">
-                {% if completed and completed.saving %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+    <!-- TOPIC LIST — each row opens a modal on click -->
+    <div class="transaction-list">
+
+        <div class="transaction-item topic-row" onclick="openTopic('saving')">
+            <div class="tx-details">
+                <h4>🐴 Saving Basics</h4>
+                <p>Build good saving habits and make your money work harder.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.saving %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.investing %}topic-card--done{% endif %}" style="--cat:#10B981" onclick="openTopic('investing')">
-            {% if completed and completed.investing %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">📈</div>
-            <h2 class="topic-title">Investing</h2>
-            <p class="topic-desc">Understand why investing beats saving long-term and how to start with as little as £1.</p>
-            <div class="topic-footer">
-                {% if completed and completed.investing %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('investing')">
+            <div class="tx-details">
+                <h4>📈 Investing</h4>
+                <p>Grow your wealth with index funds and compound interest.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.investing %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.credit %}topic-card--done{% endif %}" style="--cat:#6366F1" onclick="openTopic('credit')">
-            {% if completed and completed.credit %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">💳</div>
-            <h2 class="topic-title">Credit</h2>
-            <p class="topic-desc">Find out what a credit score is and how to use credit without falling into debt.</p>
-            <div class="topic-footer">
-                {% if completed and completed.credit %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('credit')">
+            <div class="tx-details">
+                <h4>💳 Credit</h4>
+                <p>Understand credit scores and how to use credit without falling into debt.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.credit %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.subscriptions %}topic-card--done{% endif %}" style="--cat:#EC4899" onclick="openTopic('subscriptions')">
-            {% if completed and completed.subscriptions %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🔄</div>
-            <h2 class="topic-title">Subscriptions</h2>
-            <p class="topic-desc">Stop paying for things you forgot you had and cut costs fast.</p>
-            <div class="topic-footer">
-                {% if completed and completed.subscriptions %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('subscriptions')">
+            <div class="tx-details">
+                <h4>🔄 Subscriptions</h4>
+                <p>Identify hidden fees and stop paying for things you forgot about.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.subscriptions %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.rent %}topic-card--done{% endif %}" style="--cat:#14B8A6" onclick="openTopic('rent')">
-            {% if completed and completed.rent %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🏠</div>
-            <h2 class="topic-title">Rent &amp; Bills</h2>
-            <p class="topic-desc">Know your rights as a tenant and protect your deposit.</p>
-            <div class="topic-footer">
-                {% if completed and completed.rent %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('rent')">
+            <div class="tx-details">
+                <h4>🏠 Rent &amp; Bills</h4>
+                <p>Know your rights as a tenant and protect your deposit.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.rent %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.student_loans %}topic-card--done{% endif %}" style="--cat:#F97316" onclick="openTopic('student_loans')">
-            {% if completed and completed.student_loans %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🎓</div>
-            <h2 class="topic-title">Student Loans</h2>
-            <p class="topic-desc">Understand how UK student loans work and why they're not as scary as they sound.</p>
-            <div class="topic-footer">
-                {% if completed and completed.student_loans %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('student_loans')">
+            <div class="tx-details">
+                <h4>🎓 Student Loans</h4>
+                <p>Understand how UK student loans work — they're not as scary as they sound.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.student_loans %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.tax %}topic-card--done{% endif %}" style="--cat:#EAB308" onclick="openTopic('tax')">
-            {% if completed and completed.tax %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">💼</div>
-            <h2 class="topic-title">Part-Time Work &amp; Tax</h2>
-            <p class="topic-desc">Know how much you can earn tax-free and how to claim back overpaid tax.</p>
-            <div class="topic-footer">
-                {% if completed and completed.tax %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('tax')">
+            <div class="tx-details">
+                <h4>💼 Part-Time Work &amp; Tax</h4>
+                <p>Know how much you can earn tax-free and how to claim back overpaid tax.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.tax %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.budgeting %}topic-card--done{% endif %}" style="--cat:#3B82F6" onclick="openTopic('budgeting')">
-            {% if completed and completed.budgeting %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">📊</div>
-            <h2 class="topic-title">Budgeting</h2>
-            <p class="topic-desc">Track where your money goes and build a budget you'll actually stick to.</p>
-            <div class="topic-footer">
-                {% if completed and completed.budgeting %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('budgeting')">
+            <div class="tx-details">
+                <h4>📊 Budgeting</h4>
+                <p>Create a realistic spending plan that actually works for you.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.budgeting %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.big_choices %}topic-card--done{% endif %}" style="--cat:#A855F7" onclick="openTopic('big_choices')">
-            {% if completed and completed.big_choices %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🚀</div>
-            <h2 class="topic-title">Big Life Choices</h2>
-            <p class="topic-desc">Buying a car, moving out, going to uni? Know the financial consequences first.</p>
-            <div class="topic-footer">
-                {% if completed and completed.big_choices %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('big_choices')">
+            <div class="tx-details">
+                <h4>🚀 Big Life Choices</h4>
+                <p>Buying a car, moving out, going to uni? Know the financial consequences first.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.big_choices %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.overdrafts %}topic-card--done{% endif %}" style="--cat:#EF4444" onclick="openTopic('overdrafts')">
-            {% if completed and completed.overdrafts %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">⚠️</div>
-            <h2 class="topic-title">Overdrafts</h2>
-            <p class="topic-desc">Understand student overdrafts vs the expensive kind and how to escape one.</p>
-            <div class="topic-footer">
-                {% if completed and completed.overdrafts %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('overdrafts')">
+            <div class="tx-details">
+                <h4>⚠️ Overdrafts</h4>
+                <p>Understand student overdrafts vs the expensive kind, and how to escape one.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.overdrafts %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.insurance %}topic-card--done{% endif %}" style="--cat:#0EA5E9" onclick="openTopic('insurance')">
-            {% if completed and completed.insurance %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🛡️</div>
-            <h2 class="topic-title">Insurance Basics</h2>
-            <p class="topic-desc">Learn which insurances are actually worth it and which ones you can skip.</p>
-            <div class="topic-footer">
-                {% if completed and completed.insurance %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('insurance')">
+            <div class="tx-details">
+                <h4>🛡️ Insurance Basics</h4>
+                <p>Learn which insurances are actually worth it and which ones you can skip.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.insurance %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.side_hustles %}topic-card--done{% endif %}" style="--cat:#84CC16" onclick="openTopic('side_hustles')">
-            {% if completed and completed.side_hustles %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">⚡</div>
-            <h2 class="topic-title">Side Hustles &amp; Freelancing</h2>
-            <p class="topic-desc">Turn your skills into extra income and understand the tax rules.</p>
-            <div class="topic-footer">
-                {% if completed and completed.side_hustles %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('side_hustles')">
+            <div class="tx-details">
+                <h4>⚡ Side Hustles &amp; Freelancing</h4>
+                <p>Turn your skills into extra income and understand the tax rules.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.side_hustles %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.crypto %}topic-card--done{% endif %}" style="--cat:#F59E0B" onclick="openTopic('crypto')">
-            {% if completed and completed.crypto %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">₿</div>
-            <h2 class="topic-title">Cryptocurrency</h2>
-            <p class="topic-desc">Cut through the hype. Understand what crypto is, the real risks, and how to approach it sensibly.</p>
-            <div class="topic-footer">
-                {% if completed and completed.crypto %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('crypto')">
+            <div class="tx-details">
+                <h4>₿ Cryptocurrency</h4>
+                <p>Cut through the hype and understand the real risks of crypto.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.crypto %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.first_home %}topic-card--done{% endif %}" style="--cat:#10B981" onclick="openTopic('first_home')">
-            {% if completed and completed.first_home %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🔑</div>
-            <h2 class="topic-title">Buying Your First Home</h2>
-            <p class="topic-desc">Mortgages, deposits, stamp duty — everything before stepping on the property ladder.</p>
-            <div class="topic-footer">
-                {% if completed and completed.first_home %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('first_home')">
+            <div class="tx-details">
+                <h4>🔑 Buying Your First Home</h4>
+                <p>Mortgages, deposits, stamp duty — everything before the property ladder.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.first_home %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.food %}topic-card--done{% endif %}" style="--cat:#EC4899" onclick="openTopic('food')">
-            {% if completed and completed.food %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🛒</div>
-            <h2 class="topic-title">Food &amp; Grocery Budgeting</h2>
-            <p class="topic-desc">Cut your food bill without eating badly. Meal planning and smart shopping.</p>
-            <div class="topic-footer">
-                {% if completed and completed.food %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('food')">
+            <div class="tx-details">
+                <h4>🛒 Food &amp; Grocery Budgeting</h4>
+                <p>Cut your food bill without eating badly. Meal planning and smart shopping.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.food %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.travel %}topic-card--done{% endif %}" style="--cat:#6366F1" onclick="openTopic('travel')">
-            {% if completed and completed.travel %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">✈️</div>
-            <h2 class="topic-title">Travel on a Budget</h2>
-            <p class="topic-desc">See the world without breaking the bank. Find deals, travel cheap, avoid hidden fees.</p>
-            <div class="topic-footer">
-                {% if completed and completed.travel %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('travel')">
+            <div class="tx-details">
+                <h4>✈️ Travel on a Budget</h4>
+                <p>See the world without breaking the bank. Find deals and avoid hidden fees.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.travel %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.mental_health %}topic-card--done{% endif %}" style="--cat:#14B8A6" onclick="openTopic('mental_health')">
-            {% if completed and completed.mental_health %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🧠</div>
-            <h2 class="topic-title">Mental Health &amp; Money</h2>
-            <p class="topic-desc">Money stress is real. Break the anxiety cycle and take back control.</p>
-            <div class="topic-footer">
-                {% if completed and completed.mental_health %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('mental_health')">
+            <div class="tx-details">
+                <h4>🧠 Mental Health &amp; Money</h4>
+                <p>Break the money stress cycle and take back control of your finances.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.mental_health %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.salary %}topic-card--done{% endif %}" style="--cat:#F97316" onclick="openTopic('salary')">
-            {% if completed and completed.salary %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🤝</div>
-            <h2 class="topic-title">Negotiating Salary</h2>
-            <p class="topic-desc">Most people never negotiate. Learn exactly how to ask for more money and get it.</p>
-            <div class="topic-footer">
-                {% if completed and completed.salary %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('salary')">
+            <div class="tx-details">
+                <h4>🤝 Negotiating Salary</h4>
+                <p>Most people never negotiate. Learn exactly how to ask for more and get it.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.salary %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.scams %}topic-card--done{% endif %}" style="--cat:#EF4444" onclick="openTopic('scams')">
-            {% if completed and completed.scams %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🔒</div>
-            <h2 class="topic-title">Scams &amp; Fraud Protection</h2>
-            <p class="topic-desc">Young people are the most targeted. Learn to spot scams before it's too late.</p>
-            <div class="topic-footer">
-                {% if completed and completed.scams %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('scams')">
+            <div class="tx-details">
+                <h4>🔒 Scams &amp; Fraud Protection</h4>
+                <p>Young people are the most targeted. Learn to spot scams before it's too late.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.scams %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-        <div class="topic-card {% if completed and completed.pension %}topic-card--done{% endif %}" style="--cat:#A855F7" onclick="openTopic('pension')">
-            {% if completed and completed.pension %}<div class="topic-badge">✓ Done</div>{% endif %}
-            <div class="topic-emoji">🏦</div>
-            <h2 class="topic-title">Pension &amp; Retirement</h2>
-            <p class="topic-desc">Retirement feels far away but the earlier you start, the less you need.</p>
-            <div class="topic-footer">
-                {% if completed and completed.pension %}<span class="topic-status topic-status--done">Completed ✓</span>{% else %}<span class="topic-status topic-status--todo">Start →</span>{% endif %}
+        <div class="transaction-item topic-row" onclick="openTopic('pension')" style="border-bottom: none;">
+            <div class="tx-details">
+                <h4>🏦 Pension &amp; Retirement</h4>
+                <p>Retirement feels far away but the earlier you start, the less you need.</p>
+            </div>
+            <div class="topic-row-right">
+                {% if completed and completed.pension %}<span class="done-pill">✓ Done</span>{% endif %}
+                <span class="read-arrow">Read →</span>
             </div>
         </div>
 
-    </div><!-- end .learn-grid -->
-</div><!-- end .learn-page -->
+    </div><!-- end .transaction-list -->
+</div><!-- end .container -->
 
+
+<!-- ── MODAL OVERLAY ──────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
 
 <!-- ── MODAL ──────────────────────────────────────────────────────────────── -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
 <div class="modal" id="modal">
 
-    <!-- Modal header -->
     <div class="modal-header" id="modal-header">
         <div class="modal-header-left">
             <span class="modal-emoji" id="modal-emoji"></span>
@@ -247,32 +269,248 @@
         <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
 
-    <!-- Progress bar inside modal -->
+    <!-- Step progress bar -->
     <div class="modal-progress-track">
         <div class="modal-progress-fill" id="modal-progress"></div>
     </div>
 
-    <!-- Content area — theory cards and quiz both render here -->
+    <!-- Theory cards and quiz render here -->
     <div class="modal-body" id="modal-body"></div>
 
-    <!-- Navigation buttons -->
     <div class="modal-footer">
-        <button class="modal-btn-secondary" id="modal-prev" onclick="modalNav(-1)">← Back</button>
-        <button class="modal-btn-primary" id="modal-next" onclick="modalNav(1)">Next →</button>
+        <button class="btn-secondary" id="modal-prev" onclick="modalNav(-1)">← Back</button>
+        <button class="btn-primary" id="modal-next" onclick="modalNav(1)" style="flex:1">Next →</button>
     </div>
 
 </div>
 
 
-<script>
-// ── ALL TOPIC DATA ────────────────────────────────────────────────────────────
-// Each topic has: theory cards and quiz questions
-// theory: { title, body, highlight }
-// quiz:   { q, opts, a (index), exp }
+<style>
+/* ── LEARN PAGE ADDITIONS ─────────────────────────────────────────────────── */
 
+/* Progress bar above the list */
+.learn-progress-wrap { margin-bottom: 8px; }
+.learn-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #7A7A7A;
+    margin-bottom: 6px;
+}
+.learn-progress-track {
+    height: 6px;
+    background: #E8E5E1;
+    border-radius: 99px;
+    overflow: hidden;
+}
+.learn-progress-fill {
+    height: 100%;
+    width: var(--pct, 0%);
+    background: #C29B62;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+}
+
+/* Clickable row */
+.topic-row { cursor: pointer; transition: background-color 0.15s ease; }
+.topic-row:hover { background-color: #F9F9F9; }
+
+/* Right side of each row */
+.topic-row-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* "✓ Done" green pill */
+.done-pill {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8CA38D;
+    background: rgba(140,163,141,0.12);
+    border: 1px solid rgba(140,163,141,0.3);
+    border-radius: 99px;
+    padding: 2px 10px;
+}
+
+/* "Read →" arrow */
+.read-arrow {
+    color: #C29B62;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* ── MODAL ────────────────────────────────────────────────────────────────── */
+.modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(45,45,45,0.5);
+    backdrop-filter: blur(3px);
+    z-index: 200;
+}
+.modal-overlay.active { display: block; }
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -48%);
+    width: min(660px, 95vw);
+    max-height: 85vh;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(45,45,45,0.15);
+    z-index: 201;
+    overflow: hidden;
+    flex-direction: column;
+}
+.modal.active {
+    display: flex;
+    animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes modalIn {
+    from { opacity:0; transform: translate(-50%, -46%); }
+    to   { opacity:1; transform: translate(-50%, -50%); }
+}
+
+/* Modal header with ochre bottom border */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 3px solid #C29B62;
+    flex-shrink: 0;
+}
+.modal-header-left { display: flex; align-items: center; gap: 10px; }
+.modal-emoji { font-size: 1.4rem; }
+.modal-title { font-size: 17px; font-weight: 600; color: #2D2D2D; }
+.modal-close {
+    font-size: 14px;
+    color: #7A7A7A;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #F9F9F9;
+    border: 1px solid #E8E5E1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.modal-close:hover { background: #E8E5E1; color: #2D2D2D; }
+
+/* Thin ochre progress bar */
+.modal-progress-track { height: 3px; background: #E8E5E1; flex-shrink: 0; }
+.modal-progress-fill  { height: 100%; width: 0; background: #C29B62; transition: width 0.4s ease; }
+
+/* Scrollable body */
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 24px;
+}
+.modal-body::-webkit-scrollbar { width: 4px; }
+.modal-body::-webkit-scrollbar-thumb { background: #E8E5E1; border-radius: 99px; }
+
+/* Theory card content */
+.modal-card-num { font-size: 12px; font-weight: 600; color: #7A7A7A; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+.modal-card-title { font-size: 20px; font-weight: 600; color: #2D2D2D; margin-bottom: 14px; line-height: 1.35; }
+.modal-card-body { font-size: 15px; color: #5A5A5A; line-height: 1.75; margin-bottom: 20px; }
+.modal-highlight {
+    display: flex; gap: 10px;
+    background: rgba(194,155,98,0.08);
+    border-left: 3px solid #C29B62;
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+}
+.modal-highlight span:last-child { font-size: 14px; font-weight: 600; color: #A6824D; line-height: 1.5; }
+
+/* Quiz options */
+.modal-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.modal-opt {
+    display: flex; align-items: center; gap: 12px;
+    background: #F9F9F9;
+    border: 1px solid #E8E5E1;
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+    color: #2D2D2D;
+    font-size: 14px;
+    font-family: inherit;
+}
+.modal-opt:hover:not(:disabled) { border-color: #C29B62; background: rgba(194,155,98,0.05); }
+.modal-opt.selected { border-color: #C29B62; background: rgba(194,155,98,0.08); }
+.modal-opt.correct  { border-color: #8CA38D !important; background: rgba(140,163,141,0.08) !important; }
+.modal-opt.wrong    { border-color: #BA827A !important; background: rgba(186,130,122,0.07) !important; }
+.modal-opt.dimmed   { opacity: 0.4; }
+.modal-opt-letter {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    background: #E8E5E1;
+    border-radius: 6px;
+    font-size: 12px; font-weight: 600; color: #7A7A7A;
+    flex-shrink: 0; transition: all 0.15s;
+}
+.modal-opt.selected .modal-opt-letter { background: #C29B62; color: #fff; }
+.modal-opt.correct  .modal-opt-letter { background: #8CA38D; color: #fff; }
+.modal-opt.wrong    .modal-opt-letter { background: #BA827A; color: #fff; }
+.modal-explanation { background: #F9F9F9; border: 1px solid #E8E5E1; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #7A7A7A; line-height: 1.6; }
+
+/* Results screen */
+.modal-results { text-align: center; padding: 16px 0 24px; }
+.modal-score-circle {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: rgba(194,155,98,0.1);
+    border: 3px solid #C29B62;
+    display: flex; align-items: baseline; justify-content: center;
+    margin: 0 auto 14px;
+}
+.modal-score-num { font-size: 2.2rem; font-weight: 600; color: #C29B62; }
+.modal-score-tot { font-size: 1.1rem; color: #A6824D; }
+.modal-grade { font-size: 1.4rem; font-weight: 600; color: #2D2D2D; margin-bottom: 4px; }
+.modal-pct { color: #7A7A7A; font-size: 14px; }
+.modal-breakdown { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.modal-result-row { display: flex; gap: 10px; border-radius: 6px; padding: 10px 14px; }
+.r-correct { background: rgba(140,163,141,0.07); border: 1px solid rgba(140,163,141,0.2); }
+.r-wrong   { background: rgba(186,130,122,0.07); border: 1px solid rgba(186,130,122,0.2); }
+.r-icon { font-weight: 700; flex-shrink: 0; margin-top: 1px; font-size: 13px; }
+.r-correct .r-icon { color: #8CA38D; }
+.r-wrong   .r-icon { color: #BA827A; }
+.r-q  { font-size: 13px; font-weight: 500; color: #2D2D2D; margin-bottom: 3px; }
+.r-exp { font-size: 12px; color: #7A7A7A; line-height: 1.5; }
+.modal-results-btns { display: flex; gap: 10px; margin-top: 20px; }
+
+/* Modal footer */
+.modal-footer {
+    display: flex; gap: 10px;
+    padding: 16px 24px;
+    border-top: 1px solid #E8E5E1;
+    flex-shrink: 0;
+}
+.btn-secondary {
+    font-size: 14px; font-weight: 500;
+    color: #7A7A7A;
+    background: #F9F9F9;
+    border: 1px solid #E8E5E1;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+.btn-secondary:hover:not(:disabled) { color: #2D2D2D; background: #E8E5E1; }
+.btn-secondary:disabled { opacity: 0.3; cursor: not-allowed; }
+</style>
+
+
+<script>
 const TOPICS = {
     saving: {
-        title: 'Saving Basics', emoji: '🐴', color: '#F59E0B',
+        title: 'Saving Basics', emoji: '🐴',
         theory: [
             { title: "Why saving feels hard (and why it isn't)", body: "Most people think saving means having money left over at the end of the month. It doesn't. It means paying yourself first — before you spend anything else. Even £5/week is £260 a year. The habit matters more than the amount.", highlight: "Pay yourself first, not last." },
             { title: "The 50/30/20 rule", body: "50% of your income goes to needs (rent, food, bills), 30% to wants (eating out, clothes, fun), and 20% to savings and debt. You don't have to be perfect — even shifting 5% toward savings changes everything over time.", highlight: "50 needs · 30 wants · 20 savings." },
@@ -288,7 +526,7 @@ const TOPICS = {
         ]
     },
     investing: {
-        title: 'Investing', emoji: '📈', color: '#10B981',
+        title: 'Investing', emoji: '📈',
         theory: [
             { title: "Why investing beats saving (eventually)", body: "Savings accounts pay ~4-5% right now. But a diversified stock market index returns ~7-10% annually over the long term. Over 30 years, the difference between 4% and 8% on £5,000 is the difference between £16,000 and £50,000.", highlight: "Time in the market beats timing the market." },
             { title: "Compound interest: the eighth wonder", body: "When your returns earn returns, growth accelerates exponentially. £100/month invested at 7% from age 20 = ~£262,000 by 60. Starting at 30? Only ~£121,000. Same money, ten years less.", highlight: "Start early. Even small amounts." },
@@ -304,321 +542,317 @@ const TOPICS = {
         ]
     },
     credit: {
-        title: 'Credit', emoji: '💳', color: '#6366F1',
+        title: 'Credit', emoji: '💳',
         theory: [
-            { title: "Credit scores: what they actually are", body: "Your credit score (0–999 in the UK with Experian) tells lenders how likely you are to repay money. It affects whether you can rent a flat, get a phone contract, or get a mortgage. No credit history = invisible to lenders.", highlight: "No credit history is almost as bad as bad credit." },
+            { title: "Credit scores: what they actually are", body: "Your credit score (0–999 in the UK) tells lenders how likely you are to repay money. It affects whether you can rent a flat, get a phone contract, or get a mortgage. No credit history = invisible to lenders.", highlight: "No credit history is almost as bad as bad credit." },
             { title: "How to build credit as a student", body: "Register on the electoral roll (huge impact, takes 5 minutes). Get a student credit card and spend only what you can pay off in full each month. Stay under 30% of your credit limit.", highlight: "Electoral roll + on-time payments = credit foundation." },
             { title: "The overdraft trap", body: "Student overdrafts are often 0% interest — which is great. But they're a loan, not free money. Many students get a rude shock when they graduate and it starts charging 39.9% EAR.", highlight: "Overdraft = interest-free debt, not extra income." },
             { title: "Credit cards done right", body: "A credit card used correctly costs you nothing, builds your score, earns cashback, and offers purchase protection. The rule: never spend more than you can pay off in full at the end of the month.", highlight: "Pay in full every month. No exceptions." },
         ],
         quiz: [
-            { q: "What does a credit score primarily tell lenders?", opts: ["How much you have saved", "How likely you are to repay borrowed money", "Your annual income", "How many accounts you have"], a: 1, exp: "Credit scores are about repayment behaviour, not wealth. Consistent repayment = high score." },
+            { q: "What does a credit score primarily tell lenders?", opts: ["How much you have saved", "How likely you are to repay borrowed money", "Your annual income", "How many accounts you have"], a: 1, exp: "Credit scores are about repayment behaviour, not wealth." },
             { q: "Which action has the biggest positive impact on your UK credit score?", opts: ["Having lots of savings", "Registering on the electoral roll", "Having multiple credit cards", "Earning a high income"], a: 1, exp: "Electoral roll registration is fast, free, and has a significant positive effect on UK credit scores." },
-            { q: "What credit utilisation rate is recommended?", opts: ["100% for a high score", "Under 30% of your credit limit", "Never use your credit card", "Exactly 50% each month"], a: 1, exp: "High utilisation signals financial stress. Keeping it under 30% shows controlled usage." },
-            { q: "When should you carry a balance on a credit card?", opts: ["To build credit faster", "When the rate is under 20%", "Almost never — pay in full", "For large purchases"], a: 2, exp: "Carrying a balance costs you 25-30% APR. Pay in full every month — this is non-negotiable." },
-            { q: "Your student overdraft is 0% interest. How should you think about it?", opts: ["Part of your regular budget", "Emergency-only with a plan to repay", "Free money from the bank", "As savings"], a: 1, exp: "0% interest is temporary. When it ends, the rate jumps sharply. Always plan to repay before graduation." },
+            { q: "What credit utilisation rate is recommended?", opts: ["100% for a high score", "Under 30% of your limit", "Never use your card", "Exactly 50% each month"], a: 1, exp: "High utilisation signals financial stress. Keeping it under 30% shows controlled usage." },
+            { q: "When should you carry a balance on a credit card?", opts: ["To build credit faster", "When the rate is under 20%", "Almost never — pay in full", "For large purchases"], a: 2, exp: "Carrying a balance costs you 25-30% APR. Pay in full every month." },
+            { q: "Your student overdraft is 0% interest. How should you think about it?", opts: ["Part of your regular budget", "Emergency-only with a plan to repay", "Free money from the bank", "As savings"], a: 1, exp: "0% interest is temporary. When it ends, the rate jumps sharply." },
         ]
     },
     subscriptions: {
-        title: 'Subscriptions', emoji: '🔄', color: '#EC4899',
+        title: 'Subscriptions', emoji: '🔄',
         theory: [
             { title: "Subscription creep is real", body: "The average UK adult underestimates their monthly subscriptions by £40–60. Netflix, Spotify, Amazon Prime, gym, iCloud, Xbox Game Pass — it stacks up. Run an audit: check your bank statements for every recurring payment.", highlight: "You probably pay for 3+ things you barely use." },
             { title: "The free trial trap", body: "Companies design free trials to become paid subscriptions you forget to cancel. The fix: when you start any free trial, immediately set a calendar reminder 2 days before it ends.", highlight: "Set a cancellation reminder the moment you subscribe." },
-            { title: "Shared plans and student discounts", body: "Spotify costs £11.99/month solo or £6/month on a student plan. Most streaming services have student discounts — Spotify, Apple Music, YouTube Premium. Always check before paying full price.", highlight: "Student discount = half price or less. Always check." },
+            { title: "Shared plans and student discounts", body: "Spotify costs £11.99/month solo or £6/month on a student plan. Most streaming services have student discounts. Always check before paying full price.", highlight: "Student discount = half price or less. Always check." },
             { title: "Annual vs monthly billing", body: "Paying annually saves 15–30% on subscriptions you genuinely use. Rule: monthly until you've used it consistently for 3 months, then switch to annual.", highlight: "3 months of consistent use → switch to annual." },
         ],
         quiz: [
             { q: "What is 'subscription creep'?", opts: ["When prices increase suddenly", "Slowly accumulating more subscriptions than you realise", "When a service secretly upgrades your plan", "When your bank blocks a payment"], a: 1, exp: "Subscription creep is the gradual accumulation of recurring charges that individually seem small but add up." },
             { q: "Best thing to do when signing up for a free trial?", opts: ["Cancel and re-sign up later", "Set a calendar reminder before the trial ends", "Wait and see if you're charged", "Sign up with a separate email"], a: 1, exp: "A proactive reminder means you make a deliberate choice rather than passively getting charged." },
-            { q: "You use Spotify daily at £11.99/month. What should you do?", opts: ["Cancel — music is free on YouTube", "Switch to a student or annual plan", "Keep paying — it's fair value", "Share a free trial with friends"], a: 1, exp: "The student plan halves the price. For a daily-use service, that's a no-brainer saving." },
+            { q: "You use Spotify daily at £11.99/month. What should you do?", opts: ["Cancel — music is free on YouTube", "Switch to a student or annual plan", "Keep paying — it's fair value", "Share a free trial"], a: 1, exp: "The student plan halves the price. For a daily-use service, that's a no-brainer saving." },
             { q: "When does it make sense to switch to annual billing?", opts: ["Immediately when signing up", "After 3+ months of consistent use", "Only for services over £10/month", "Never"], a: 1, exp: "Annual billing saves 15-30% but commits you. Only switch once you're sure you'll keep using it." },
-            { q: "You find a £7.99 charge you don't recognise. What do you do?", opts: ["Ignore it", "Google it and cancel if you don't need it", "Report fraud immediately", "Wait to see if it charges again"], a: 1, exp: "Always investigate unknown recurring charges. It's often a forgotten trial — cancel it." },
+            { q: "You find a £7.99 charge you don't recognise. What do you do?", opts: ["Ignore it", "Google it and cancel if you don't need it", "Report fraud immediately", "Wait to see if it charges again"], a: 1, exp: "Always investigate unknown recurring charges. It's often a forgotten trial." },
         ]
     },
     rent: {
-        title: 'Rent & Bills', emoji: '🏠', color: '#14B8A6',
+        title: 'Rent & Bills', emoji: '🏠',
         theory: [
             { title: "The 30% rule", body: "Your rent should be no more than 30% of your gross income. If you're over 40%, that's a red flag — you'll struggle to save or handle emergencies.", highlight: "Rent should be ≤30% of your income." },
-            { title: "What 'bills included' actually means", body: "Some rentals include utilities (gas, electric, water, broadband). Others don't. A flat at £800/month all-in can easily beat one at £650/month where you're adding £200 in bills. Always calculate the real total.", highlight: "Always calculate the all-in monthly cost." },
-            { title: "Negotiating rent (yes, you can)", body: "Landlords hate vacant properties more than they hate negotiating. If a flat has been listed for 2+ weeks, or you can offer a longer lease — you have leverage. Worst they say is no.", highlight: "It never hurts to ask. Landlords often say yes." },
-            { title: "Deposit protection and your rights", body: "In the UK, landlords must protect your deposit in a government-backed scheme within 30 days. Always photograph every room before you move in and email the photos to yourself — timestamped evidence.", highlight: "Photo everything. Your deposit depends on it." },
+            { title: "What 'bills included' actually means", body: "Some rentals include utilities. Others don't. A flat at £800/month all-in can easily beat one at £650 + £200 in bills. Always calculate the real total.", highlight: "Always calculate the all-in monthly cost." },
+            { title: "Negotiating rent (yes, you can)", body: "Landlords hate vacant properties more than they hate negotiating. If a flat has been listed for 2+ weeks, or you can offer a longer lease — you have leverage.", highlight: "It never hurts to ask. Landlords often say yes." },
+            { title: "Deposit protection and your rights", body: "In the UK, landlords must protect your deposit in a government-backed scheme within 30 days. Always photograph every room before you move in and email the photos to yourself.", highlight: "Photo everything. Your deposit depends on it." },
         ],
         quiz: [
-            { q: "Max rent for someone earning £1,500/month (30% rule)?", opts: ["£300", "£450", "£600", "£750"], a: 1, exp: "30% of £1,500 = £450. Above this starts to squeeze savings and emergency fund contributions." },
-            { q: "Flat A is £700/month bills included. Flat B is £580 + ~£160 bills. Which is cheaper?", opts: ["Flat B — lower base rent", "Flat A — lower all-in cost", "They're the same", "Depends on the landlord"], a: 1, exp: "Flat B all-in = £740/month. Flat A at £700 is actually cheaper. Always calculate the full cost." },
-            { q: "UK landlords must protect your deposit within how many days?", opts: ["7 days", "14 days", "30 days", "60 days"], a: 2, exp: "Within 30 days of receiving your deposit, landlords must register it with a government-backed protection scheme." },
-            { q: "Best way to protect against unfair deposit deductions?", opts: ["Pay a smaller deposit", "Photograph every room before moving in", "Get renters insurance", "Only rent from estate agents"], a: 1, exp: "Timestamped photos sent to yourself are evidence. Without them, it's your word against the landlord's." },
+            { q: "Max rent for someone earning £1,500/month (30% rule)?", opts: ["£300", "£450", "£600", "£750"], a: 1, exp: "30% of £1,500 = £450." },
+            { q: "Flat A is £700/month bills included. Flat B is £580 + ~£160 bills. Which is cheaper?", opts: ["Flat B — lower base rent", "Flat A — lower all-in cost", "They're the same", "Depends on the landlord"], a: 1, exp: "Flat B all-in = £740. Flat A at £700 is cheaper. Always calculate the full cost." },
+            { q: "UK landlords must protect your deposit within how many days?", opts: ["7 days", "14 days", "30 days", "60 days"], a: 2, exp: "Within 30 days of receiving your deposit, landlords must register it with a government-backed scheme." },
+            { q: "Best way to protect against unfair deposit deductions?", opts: ["Pay a smaller deposit", "Photograph every room before moving in", "Get renters insurance", "Only rent from estate agents"], a: 1, exp: "Timestamped photos sent to yourself are evidence." },
             { q: "A flat you want has been listed for 3 weeks. Best move?", opts: ["Offer full price quickly", "Offer slightly below or ask for broadband included", "Walk away", "Wait longer"], a: 1, exp: "A listing sitting for weeks means the landlord needs a tenant. You have negotiating power." },
         ]
     },
     student_loans: {
-        title: 'Student Loans', emoji: '🎓', color: '#F97316',
+        title: 'Student Loans', emoji: '🎓',
         theory: [
             { title: "It's not like a normal loan", body: "UK student loans don't work like bank loans. You only repay when you earn over a threshold (£27,295 for Plan 2). If you never earn enough, you never repay. The debt doesn't affect your credit score.", highlight: "You only repay when you earn enough." },
-            { title: "Plan 2 vs Plan 5", body: "Plan 2 (started uni before 2023): repay 9% over £27,295, written off after 30 years. Plan 5 (started 2023+): repay 9% over £25,000, written off after 40 years. Both are income-contingent.", highlight: "Check which plan you're on — it matters." },
-            { title: "Should you overpay your student loan?", body: "For most people, no. With Plan 2, ~75% of graduates never fully repay before the 30-year write-off. Overpaying early means paying money you'd never have had to pay. High earners are the exception.", highlight: "For most people, don't overpay your student loan." },
-            { title: "Maintenance loan vs tuition fees", body: "Your tuition fee loan goes straight to the university — you never see it. Your maintenance loan is for living costs. Both accrue interest, but neither appears on your credit file or stops you getting a mortgage.", highlight: "Student debt doesn't affect your credit score." },
+            { title: "Plan 2 vs Plan 5", body: "Plan 2 (started uni before 2023): repay 9% over £27,295, written off after 30 years. Plan 5 (started 2023+): repay 9% over £25,000, written off after 40 years.", highlight: "Check which plan you're on — it matters." },
+            { title: "Should you overpay your student loan?", body: "For most people, no. With Plan 2, ~75% of graduates never fully repay before the 30-year write-off. Overpaying early means paying money you'd never have had to pay.", highlight: "For most people, don't overpay your student loan." },
+            { title: "Maintenance loan vs tuition fees", body: "Your tuition fee loan goes straight to the university. Your maintenance loan is for living costs. Both accrue interest, but neither appears on your credit file or stops you getting a mortgage.", highlight: "Student debt doesn't affect your credit score." },
         ],
         quiz: [
-            { q: "When do you start repaying a Plan 2 student loan?", opts: ["Immediately after graduating", "When you earn over £27,295/year", "After 5 years", "Never — it's a grant"], a: 1, exp: "Repayments only start when your income exceeds the threshold. Below that, you pay nothing." },
-            { q: "What percentage of your income above the threshold do you repay?", opts: ["5%", "9%", "15%", "20%"], a: 1, exp: "You repay 9% of everything you earn above the threshold — not 9% of your whole salary." },
-            { q: "When is a Plan 2 student loan written off?", opts: ["After 10 years", "After 20 years", "After 30 years", "Never"], a: 2, exp: "Plan 2 loans are written off 30 years after you enter repayment, regardless of how much you've repaid." },
-            { q: "Does a student loan appear on your credit report?", opts: ["Yes, always", "Only if you miss payments", "No — it doesn't affect your credit score", "Only after graduation"], a: 2, exp: "Student loans don't appear on credit reports and won't stop you getting a mortgage or credit card." },
-            { q: "For most graduates, should you overpay your student loan?", opts: ["Yes — clear it as fast as possible", "No — most won't fully repay before write-off anyway", "Only if interest is over 5%", "Only in the first 5 years"], a: 1, exp: "Most graduates never fully repay before the 30-year write-off. Overpaying often means paying money you'd never have owed." },
+            { q: "When do you start repaying a Plan 2 student loan?", opts: ["Immediately after graduating", "When you earn over £27,295/year", "After 5 years", "Never"], a: 1, exp: "Repayments only start when your income exceeds the threshold." },
+            { q: "What percentage of earnings above the threshold do you repay?", opts: ["5%", "9%", "15%", "20%"], a: 1, exp: "You repay 9% of everything you earn above the threshold." },
+            { q: "When is a Plan 2 student loan written off?", opts: ["After 10 years", "After 20 years", "After 30 years", "Never"], a: 2, exp: "Plan 2 loans are written off 30 years after you enter repayment." },
+            { q: "Does a student loan appear on your credit report?", opts: ["Yes, always", "Only if you miss payments", "No", "Only after graduation"], a: 2, exp: "Student loans don't appear on credit reports and won't stop you getting a mortgage." },
+            { q: "For most graduates, should you overpay your student loan?", opts: ["Yes — clear it ASAP", "No — most won't fully repay before write-off anyway", "Only if interest is over 5%", "Only in the first 5 years"], a: 1, exp: "Most graduates never fully repay before the 30-year write-off." },
         ]
     },
     tax: {
-        title: 'Part-Time Work & Tax', emoji: '💼', color: '#EAB308',
+        title: 'Part-Time Work & Tax', emoji: '💼',
         theory: [
-            { title: "Your personal allowance", body: "In the UK, you can earn up to £12,570 per year (2024/25) without paying any income tax. That's your personal allowance. Most students working part-time won't exceed this — but your employer might still deduct tax incorrectly.", highlight: "Earn under £12,570/year? You pay no income tax." },
-            { title: "How PAYE works", body: "PAYE (Pay As You Earn) means your employer deducts tax before paying you. The problem: if you start a job mid-year, PAYE might assume you'll earn that rate all year and overtax you. You can claim it back.", highlight: "Overtaxed by PAYE? You can claim it back from HMRC." },
-            { title: "Claiming back overpaid tax", body: "If you've been overtaxed, submit a P800 claim or use HMRC's online service. Students who only work during holidays commonly overpay. HMRC will refund it — but only if you ask.", highlight: "HMRC won't refund automatically. You have to claim." },
-            { title: "National Insurance", body: "You pay National Insurance (NI) on earnings above £12,570/year (Class 1, 8%). NI contributions count toward your State Pension entitlement. As a student working part-time, you might not pay much NI at all.", highlight: "NI builds your State Pension entitlement." },
+            { title: "Your personal allowance", body: "In the UK, you can earn up to £12,570 per year (2024/25) without paying any income tax. Most students working part-time won't exceed this — but your employer might still deduct tax incorrectly.", highlight: "Earn under £12,570/year? You pay no income tax." },
+            { title: "How PAYE works", body: "PAYE means your employer deducts tax before paying you. If you start a job mid-year, PAYE might assume you'll earn that rate all year and overtax you. You can claim it back.", highlight: "Overtaxed by PAYE? You can claim it back from HMRC." },
+            { title: "Claiming back overpaid tax", body: "If you've been overtaxed, use HMRC's online service. Students who only work during holidays commonly overpay. HMRC will refund it — but only if you ask.", highlight: "HMRC won't refund automatically. You have to claim." },
+            { title: "National Insurance", body: "You pay National Insurance on earnings above £12,570/year at 8%. NI contributions count toward your State Pension entitlement.", highlight: "NI builds your State Pension entitlement." },
         ],
         quiz: [
             { q: "What is the UK personal allowance for 2024/25?", opts: ["£10,000", "£12,570", "£15,000", "£20,000"], a: 1, exp: "The personal allowance is £12,570 — you pay no income tax on earnings below this." },
             { q: "What does PAYE stand for?", opts: ["Pay All Your Expenses", "Pay As You Earn", "Personal Annual Yearly Earnings", "Pre-Approved Year End"], a: 1, exp: "PAYE is the system where your employer automatically deducts income tax before paying you." },
-            { q: "You worked only 3 months but were taxed as if you'd work all year. What should you do?", opts: ["Accept it — that's how tax works", "Claim a refund from HMRC", "Ask your employer to pay it back", "Ignore it"], a: 1, exp: "HMRC allows you to claim back overpaid tax. Use their online portal or submit a P800 claim." },
-            { q: "At what rate do you pay National Insurance on earnings above the threshold?", opts: ["5%", "8%", "12%", "20%"], a: 1, exp: "From 2024, the main NI rate is 8% on earnings between £12,570 and £50,270." },
-            { q: "Why do NI contributions matter for students?", opts: ["They reduce your tax bill", "They count toward your State Pension entitlement", "They pay for your student loan", "They have no benefit"], a: 1, exp: "NI contributions build up your qualifying years for the State Pension — even small contributions count." },
+            { q: "You worked only 3 months but were taxed as if you'd work all year. What should you do?", opts: ["Accept it", "Claim a refund from HMRC", "Ask your employer to pay it back", "Ignore it"], a: 1, exp: "HMRC allows you to claim back overpaid tax via their online portal." },
+            { q: "At what rate do you pay NI on earnings above the threshold?", opts: ["5%", "8%", "12%", "20%"], a: 1, exp: "From 2024, the main NI rate is 8% on earnings between £12,570 and £50,270." },
+            { q: "Why do NI contributions matter?", opts: ["They reduce your tax bill", "They count toward your State Pension", "They pay for your student loan", "They have no benefit"], a: 1, exp: "NI contributions build up your qualifying years for the State Pension." },
         ]
     },
     budgeting: {
-        title: 'Budgeting', emoji: '📊', color: '#3B82F6',
+        title: 'Budgeting', emoji: '📊',
         theory: [
-            { title: "Why most budgets fail", body: "Most people budget by restricting spending, then feeling guilty when they slip. That doesn't work. A good budget isn't about restriction — it's about intentionally deciding where your money goes before you spend it.", highlight: "A budget is a plan, not a punishment." },
+            { title: "Why most budgets fail", body: "Most people budget by restricting spending, then feeling guilty when they slip. A good budget isn't about restriction — it's about intentionally deciding where your money goes before you spend it.", highlight: "A budget is a plan, not a punishment." },
             { title: "Zero-based budgeting", body: "Give every pound a job. Income minus all expenses, savings, and debt payments should equal zero. You're not spending everything — you're deciding where every pound goes, including to savings.", highlight: "Every pound has a job. Income − outgoings = 0." },
             { title: "Fixed vs variable costs", body: "Fixed costs (rent, phone bill, subscriptions) stay the same each month. Variable costs (food, going out, transport) change. Focus your budgeting effort on variable costs — that's where you have the most control.", highlight: "Variable costs are where you have control." },
             { title: "The best budgeting system is the one you use", body: "Apps like Monzo, Emma, or YNAB work. A spreadsheet works. A notes app works. Don't spend weeks finding the perfect system — start with something simple and iterate.", highlight: "Done is better than perfect. Start simple." },
         ],
         quiz: [
-            { q: "What is zero-based budgeting?", opts: ["Spending nothing this month", "Assigning every pound of income a purpose", "Only spending on necessities", "Saving 100% of your income"], a: 1, exp: "Zero-based budgeting means income minus all allocated spending, saving, and debt = zero. Every pound has a job." },
+            { q: "What is zero-based budgeting?", opts: ["Spending nothing this month", "Assigning every pound of income a purpose", "Only spending on necessities", "Saving 100% of your income"], a: 1, exp: "Zero-based budgeting means income minus all allocated spending, saving, and debt = zero." },
             { q: "What are fixed costs?", opts: ["Costs you can negotiate away", "Expenses that stay the same each month", "Only rent and utilities", "Costs that go up each year"], a: 1, exp: "Fixed costs are predictable and consistent: rent, subscriptions, phone contracts etc." },
-            { q: "Where should you focus budgeting effort for the most impact?", opts: ["Fixed costs", "Variable costs", "One-off purchases", "Annual expenses"], a: 1, exp: "Variable costs (food, going out, shopping) fluctuate and are where you have the most day-to-day control." },
-            { q: "You've tried 3 budgeting apps and given up each time. What should you do?", opts: ["Give up on budgeting entirely", "Try the most expensive app", "Start with something simpler — even a notes app", "Wait until you earn more money"], a: 2, exp: "The best budgeting system is the one you'll actually use consistently. Complexity is the enemy of consistency." },
+            { q: "Where should you focus budgeting effort for most impact?", opts: ["Fixed costs", "Variable costs", "One-off purchases", "Annual expenses"], a: 1, exp: "Variable costs fluctuate and are where you have the most day-to-day control." },
+            { q: "You've tried 3 budgeting apps and given up. What should you do?", opts: ["Give up entirely", "Try the most expensive app", "Start simpler — even a notes app", "Wait until you earn more"], a: 2, exp: "The best budgeting system is the one you'll actually use. Complexity is the enemy of consistency." },
             { q: "A budget is best described as:", opts: ["A restriction on your spending", "A punishment for overspending", "An intentional plan for where your money goes", "A list of your expenses"], a: 2, exp: "Budgeting is about being deliberate with money — deciding where it goes rather than wondering where it went." },
         ]
     },
     big_choices: {
-        title: 'Big Life Choices', emoji: '🚀', color: '#A855F7',
+        title: 'Big Life Choices', emoji: '🚀',
         theory: [
-            { title: "Buying vs leasing a car", body: "Buying outright is cheapest long-term if you can afford it. PCP (Personal Contract Purchase) deals look cheap monthly but you don't own the car and face a big final payment. Always calculate the total cost, not just the monthly.", highlight: "Always calculate total cost, not monthly payments." },
-            { title: "The real cost of moving out", body: "Beyond rent: deposit (usually 5 weeks), first month's rent upfront, furniture, kitchen essentials, broadband setup, council tax (students are exempt but need to prove it), and a moving buffer. Budget at least 2–3 months of rent as a moving fund.", highlight: "Budget 2–3 months of rent just to move in." },
-            { title: "Is university worth it financially?", body: "For many careers, yes — graduates earn significantly more over a lifetime. But it depends on the subject and institution. A 3-year degree at £9,250/year in fees plus living costs is a £50,000+ decision. Research graduate salaries in your field.", highlight: "Research graduate salaries in your field before committing." },
-            { title: "Gap years and finances", body: "A gap year can be financially smart (work, save, travel cheap) or financially damaging (burn through savings with no plan). The key is having a financial plan before you go — a target savings amount and a budget for the year.", highlight: "A gap year needs a financial plan, not just a vibe." },
+            { title: "Buying vs leasing a car", body: "Buying outright is cheapest long-term if you can afford it. PCP deals look cheap monthly but you don't own the car and face a big final payment. Always calculate the total cost, not just the monthly.", highlight: "Always calculate total cost, not monthly payments." },
+            { title: "The real cost of moving out", body: "Beyond rent: deposit (usually 5 weeks), first month upfront, furniture, kitchen essentials, broadband setup, moving buffer. Budget at least 2–3 months of rent as a moving fund.", highlight: "Budget 2–3 months of rent just to move in." },
+            { title: "Is university worth it financially?", body: "For many careers, yes — graduates earn significantly more over a lifetime. But it depends on the subject. A 3-year degree at £9,250/year in fees plus living costs is a £50,000+ decision. Research graduate salaries in your field.", highlight: "Research graduate salaries in your field before committing." },
+            { title: "Gap years and finances", body: "A gap year can be financially smart (work, save, travel cheap) or damaging (burn through savings with no plan). The key is having a financial plan before you go.", highlight: "A gap year needs a financial plan, not just a vibe." },
         ],
         quiz: [
-            { q: "What's the main downside of a PCP car deal?", opts: ["Monthly payments are too high", "You don't own the car and face a large final payment", "You can't choose the car colour", "Interest rates are fixed"], a: 1, exp: "PCP deals look affordable monthly but you're essentially renting — you face a balloon payment at the end or hand the car back." },
-            { q: "Beyond first month's rent, what else should you budget for when moving out?", opts: ["Nothing — just rent", "Deposit, furniture, kitchen essentials, broadband, moving buffer", "Just the deposit", "Just furniture"], a: 1, exp: "Moving costs go well beyond rent: deposits, furnishings, setup costs, and a buffer can easily total 2-3 months of rent." },
-            { q: "Students are typically exempt from which household cost?", opts: ["Broadband", "Electricity", "Council tax", "Water rates"], a: 2, exp: "Full-time students are exempt from council tax, but you must apply for the exemption — it's not automatic." },
-            { q: "What should you research before choosing a university course?", opts: ["The uni's sports facilities", "Graduate salaries in that field", "The length of the library opening hours", "Whether the campus is near a city"], a: 1, exp: "A degree is a major financial investment. Researching graduate outcomes helps you weigh the return on that investment." },
-            { q: "What makes a gap year financially smart?", opts: ["Spending all your savings on travel", "Having no plan and seeing what happens", "A clear financial plan, savings target, and budget", "Avoiding any work during the year"], a: 2, exp: "Gap years without financial planning often drain savings. A plan — what you'll earn, spend, and save — makes all the difference." },
+            { q: "What's the main downside of a PCP car deal?", opts: ["Monthly payments are too high", "You don't own the car and face a large final payment", "You can't choose the colour", "Interest rates are fixed"], a: 1, exp: "PCP deals look affordable monthly but you're essentially renting — you face a balloon payment at the end." },
+            { q: "Beyond first month's rent, what else should you budget for when moving out?", opts: ["Nothing extra", "Deposit, furniture, kitchen essentials, broadband, moving buffer", "Just the deposit", "Just furniture"], a: 1, exp: "Moving costs go well beyond rent: deposits, furnishings, setup costs can total 2-3 months of rent." },
+            { q: "Students are typically exempt from which household cost?", opts: ["Broadband", "Electricity", "Council tax", "Water rates"], a: 2, exp: "Full-time students are exempt from council tax — but you must apply for the exemption." },
+            { q: "What should you research before choosing a university course?", opts: ["Sports facilities", "Graduate salaries in that field", "Library opening hours", "Whether the campus is near a city"], a: 1, exp: "A degree is a major financial investment. Researching graduate outcomes helps you weigh the return." },
+            { q: "What makes a gap year financially smart?", opts: ["Spending all savings on travel", "No plan — seeing what happens", "A clear financial plan, savings target, and budget", "Avoiding any work"], a: 2, exp: "Gap years without financial planning often drain savings. A plan makes all the difference." },
         ]
     },
     overdrafts: {
-        title: 'Overdrafts', emoji: '⚠️', color: '#EF4444',
+        title: 'Overdrafts', emoji: '⚠️',
         theory: [
-            { title: "Student overdrafts are different", body: "Most UK student bank accounts offer a 0% interest overdraft of up to £1,500–£3,000. This is genuinely useful — but it's still debt, not income. The 0% rate lasts only while you're a student.", highlight: "0% overdraft ends when you graduate." },
-            { title: "Arranged vs unarranged overdrafts", body: "An arranged overdraft is pre-agreed with your bank. An unarranged overdraft (going over your limit or overdrafting with no agreement) can trigger fees of £25–£35/day at some banks. Never go unarranged.", highlight: "Never go into an unarranged overdraft." },
-            { title: "What happens when you graduate", body: "After graduation, most banks give you 1–3 years to repay your student overdraft before it starts charging interest (typically 39.9% EAR). Make a plan to clear it during this window — not after.", highlight: "Clear your overdraft in the graduate grace period." },
-            { title: "How to get out of an overdraft", body: "Treat it like debt. Stop using it as regular spending money. Each month, try to reduce the amount you're overdrawn by even a small amount. Set up a direct debit to chip away at it automatically.", highlight: "Chip away at it monthly. Small progress beats no progress." },
+            { title: "Student overdrafts are different", body: "Most UK student accounts offer a 0% interest overdraft of up to £1,500–£3,000. This is genuinely useful — but it's still debt, not income. The 0% rate lasts only while you're a student.", highlight: "0% overdraft ends when you graduate." },
+            { title: "Arranged vs unarranged overdrafts", body: "An arranged overdraft is pre-agreed with your bank. Going over your limit can trigger fees of £25–£35/day at some banks. Never go unarranged.", highlight: "Never go into an unarranged overdraft." },
+            { title: "What happens when you graduate", body: "After graduation, most banks give you 1–3 years to repay your student overdraft before it starts charging interest (typically 39.9% EAR). Make a plan to clear it during this window.", highlight: "Clear your overdraft in the graduate grace period." },
+            { title: "How to get out of an overdraft", body: "Treat it like debt. Stop using it as regular spending money. Each month, try to reduce the amount you're overdrawn by even a small amount.", highlight: "Chip away at it monthly. Small progress beats no progress." },
         ],
         quiz: [
-            { q: "What is a typical student overdraft interest rate?", opts: ["0% while studying", "5% while studying", "19.9% always", "39.9% always"], a: 0, exp: "Most student accounts offer 0% interest overdrafts while you're studying — a genuinely valuable perk." },
-            { q: "What is an unarranged overdraft?", opts: ["An overdraft you pay back early", "Going over your limit or overdrafting with no prior agreement", "An overdraft with 0% interest", "A government-backed overdraft"], a: 1, exp: "Unarranged overdrafts can trigger serious daily fees. Always arrange credit in advance if you need it." },
-            { q: "When does a student overdraft typically start charging interest?", opts: ["Immediately after graduation", "After a 1-3 year graduate grace period", "5 years after graduation", "Never"], a: 1, exp: "Most banks give graduates 1-3 years to repay at 0% before switching to standard rates of ~39.9% EAR." },
-            { q: "What's the best strategy for clearing an overdraft?", opts: ["Ignore it until you earn more", "Clear it all in one go or you'll fail", "Reduce it consistently each month by a small amount", "Switch banks and start fresh"], a: 2, exp: "Consistent small reductions beat an all-or-nothing approach. Set up a direct debit to chip away at it automatically." },
-            { q: "A graduate overdraft typically charges what interest rate once the grace period ends?", opts: ["0%", "5%", "19.9%", "~39.9%"], a: 3, exp: "Graduate overdrafts typically switch to ~39.9% EAR after the grace period — very expensive if you're not prepared." },
+            { q: "What is a typical student overdraft interest rate?", opts: ["0% while studying", "5% while studying", "19.9% always", "39.9% always"], a: 0, exp: "Most student accounts offer 0% interest overdrafts while you're studying." },
+            { q: "What is an unarranged overdraft?", opts: ["An overdraft you pay back early", "Going over your limit with no prior agreement", "An overdraft with 0% interest", "A government-backed overdraft"], a: 1, exp: "Unarranged overdrafts can trigger serious daily fees. Always arrange credit in advance." },
+            { q: "When does a student overdraft typically start charging interest?", opts: ["Immediately after graduation", "After a 1-3 year graduate grace period", "After 5 years", "Never"], a: 1, exp: "Most banks give graduates 1-3 years to repay at 0% before switching to standard rates." },
+            { q: "Best strategy for clearing an overdraft?", opts: ["Ignore it until you earn more", "Clear it all in one go or fail", "Reduce it consistently each month", "Switch banks and start fresh"], a: 2, exp: "Consistent small reductions beat an all-or-nothing approach." },
+            { q: "A graduate overdraft typically charges what rate once the grace period ends?", opts: ["0%", "5%", "19.9%", "~39.9%"], a: 3, exp: "Graduate overdrafts typically switch to ~39.9% EAR after the grace period." },
         ]
     },
     insurance: {
-        title: 'Insurance Basics', emoji: '🛡️', color: '#0EA5E9',
+        title: 'Insurance Basics', emoji: '🛡️',
         theory: [
-            { title: "Insurance: paying for peace of mind", body: "Insurance is a trade — you pay a small regular amount to avoid a potentially huge one-off loss. It only makes sense when the thing you're insuring against would genuinely hurt you financially if it happened.", highlight: "Only insure things you genuinely can't afford to lose." },
-            { title: "Contents insurance for students", body: "Your landlord's buildings insurance doesn't cover your stuff. Contents insurance protects your laptop, phone, clothes, and other belongings against theft and damage. Many student policies cost £5–£10/month.", highlight: "Your landlord's insurance doesn't cover your belongings." },
-            { title: "Phone insurance: worth it?", body: "Manufacturer warranties cover faults but not accidental damage. Phone insurance (£8–£15/month) makes sense for an expensive flagship phone you can't afford to replace. For a budget phone, self-insure by keeping a small emergency fund instead.", highlight: "Phone insurance only makes sense for expensive handsets." },
+            { title: "Insurance: paying for peace of mind", body: "Insurance is a trade — you pay a small regular amount to avoid a potentially huge one-off loss. It only makes sense when the thing you're insuring against would genuinely hurt you financially.", highlight: "Only insure things you genuinely can't afford to lose." },
+            { title: "Contents insurance for students", body: "Your landlord's buildings insurance doesn't cover your stuff. Contents insurance protects your laptop, phone, and belongings against theft and damage. Many student policies cost £5–£10/month.", highlight: "Your landlord's insurance doesn't cover your belongings." },
+            { title: "Phone insurance: worth it?", body: "Phone insurance (£8–£15/month) makes sense for an expensive flagship phone you can't afford to replace. For a budget phone, keep a small emergency fund instead.", highlight: "Phone insurance only makes sense for expensive handsets." },
             { title: "Travel insurance: never skip it", body: "One medical emergency abroad without insurance can cost tens of thousands. Travel insurance is cheap — often £20–£50 for a week-long trip. Get an annual multi-trip policy if you travel more than twice a year.", highlight: "Never travel abroad without insurance." },
         ],
         quiz: [
-            { q: "When does insurance make financial sense?", opts: ["Always, for everything", "When the potential loss would genuinely hurt you financially", "Only for cars and houses", "Never — it's always a scam"], a: 1, exp: "Insurance is only worth paying for when the thing you're protecting against would cause real financial hardship if it happened." },
-            { q: "Does your landlord's buildings insurance cover your belongings?", opts: ["Yes, always", "Only if you're on the policy", "No — you need separate contents insurance", "Only for items over £500"], a: 2, exp: "Buildings insurance covers the structure. Contents insurance covers your stuff — they're completely separate policies." },
-            { q: "For which type of phone does insurance make the most sense?", opts: ["Any smartphone", "Budget phones under £200", "Expensive flagship phones you can't afford to replace", "Old phones"], a: 2, exp: "Insurance makes sense when the replacement cost would genuinely hurt. For cheap phones, a small emergency fund works better." },
-            { q: "What's the cheapest way to get travel insurance if you travel multiple times a year?", opts: ["Buy a new policy each trip", "Annual multi-trip policy", "Credit card travel cover only", "Travel uninsured"], a: 1, exp: "Annual multi-trip policies typically work out much cheaper per trip than buying individual policies each time." },
-            { q: "What is the main risk of travelling abroad without insurance?", opts: ["Your flight might be cancelled", "A medical emergency could cost tens of thousands", "You won't get a refund on hotels", "Your luggage might get lost"], a: 1, exp: "Medical costs abroad — especially in the US or when requiring evacuation — can be catastrophic without insurance." },
+            { q: "When does insurance make financial sense?", opts: ["Always, for everything", "When the potential loss would genuinely hurt you financially", "Only for cars and houses", "Never"], a: 1, exp: "Insurance is only worth paying for when the thing you're protecting against would cause real financial hardship." },
+            { q: "Does your landlord's buildings insurance cover your belongings?", opts: ["Yes, always", "Only if you're on the policy", "No — you need separate contents insurance", "Only for items over £500"], a: 2, exp: "Buildings insurance covers the structure. Contents insurance covers your stuff." },
+            { q: "For which phone does insurance make most sense?", opts: ["Any smartphone", "Budget phones under £200", "Expensive flagships you can't afford to replace", "Old phones"], a: 2, exp: "Insurance makes sense when the replacement cost would genuinely hurt." },
+            { q: "Cheapest way to get travel insurance if you travel multiple times a year?", opts: ["Buy a new policy each trip", "Annual multi-trip policy", "Credit card travel cover only", "Travel uninsured"], a: 1, exp: "Annual multi-trip policies typically work out much cheaper per trip." },
+            { q: "Main risk of travelling abroad without insurance?", opts: ["Flight cancellation", "A medical emergency could cost tens of thousands", "Hotel refund issues", "Luggage loss"], a: 1, exp: "Medical costs abroad can be catastrophic without insurance." },
         ]
     },
     side_hustles: {
-        title: 'Side Hustles & Freelancing', emoji: '⚡', color: '#84CC16',
+        title: 'Side Hustles & Freelancing', emoji: '⚡',
         theory: [
-            { title: "Finding your first gig", body: "Start with skills you already have. Graphic design, writing, coding, tutoring, video editing, social media management — all in high demand. Platforms like Fiverr, Upwork, and Toptal let you start with zero experience and build a portfolio.", highlight: "Start with skills you already have." },
-            { title: "The tax rules you need to know", body: "If you earn over £1,000/year from self-employment (the trading allowance), you need to register as self-employed with HMRC and complete a Self Assessment tax return each year. Miss this and you can be fined.", highlight: "Earn over £1,000 freelancing? Register with HMRC." },
-            { title: "Self Assessment basics", body: "Self Assessment is how self-employed people pay tax. You file online by 31 January each year for the previous tax year. Keep records of all income and expenses — anything you buy purely for work is tax-deductible.", highlight: "File by 31 January. Keep all records." },
-            { title: "Invoicing and getting paid", body: "Always invoice clients in writing with a due date (30 days is standard). Include your name, what you did, the amount, your bank details, and a unique invoice number. Chase late payments professionally — it's your money.", highlight: "Invoice in writing. Chase late payments." },
+            { title: "Finding your first gig", body: "Start with skills you already have. Graphic design, writing, coding, tutoring, video editing — all in high demand. Platforms like Fiverr and Upwork let you start with zero experience.", highlight: "Start with skills you already have." },
+            { title: "The tax rules you need to know", body: "If you earn over £1,000/year from self-employment, you need to register with HMRC and complete a Self Assessment tax return each year. Miss this and you can be fined.", highlight: "Earn over £1,000 freelancing? Register with HMRC." },
+            { title: "Self Assessment basics", body: "Self Assessment is how self-employed people pay tax. You file online by 31 January each year. Keep records of all income and expenses — anything bought purely for work is tax-deductible.", highlight: "File by 31 January. Keep all records." },
+            { title: "Invoicing and getting paid", body: "Always invoice clients in writing with a due date (30 days is standard). Include your name, what you did, the amount, your bank details, and a unique invoice number.", highlight: "Invoice in writing. Chase late payments." },
         ],
         quiz: [
-            { q: "At what annual self-employment income do you need to register with HMRC?", opts: ["£500", "£1,000", "£5,000", "£12,570"], a: 1, exp: "The trading allowance is £1,000/year. Earn above this from self-employment and you must register and file a tax return." },
-            { q: "What is Self Assessment?", opts: ["A way to assess your own credit score", "The system self-employed people use to pay tax", "A government grant for freelancers", "A type of business bank account"], a: 1, exp: "Self Assessment is HMRC's system for calculating and paying tax on self-employed income." },
-            { q: "When is the Self Assessment online filing deadline?", opts: ["31 October", "31 December", "31 January", "5 April"], a: 2, exp: "Online Self Assessment tax returns must be filed by 31 January each year for the previous tax year." },
-            { q: "What expenses can you deduct from self-employment income?", opts: ["Any personal expense", "Only travel costs", "Anything bought purely for work purposes", "Nothing — all income is taxed"], a: 2, exp: "Legitimate business expenses (equipment, software, travel for work) reduce your taxable income." },
-            { q: "What should a freelance invoice always include?", opts: ["Just your name and bank details", "Name, description of work, amount, due date, bank details, invoice number", "Only the amount owed", "Your National Insurance number"], a: 1, exp: "A proper invoice protects you legally and makes it easier to chase late payments professionally." },
+            { q: "At what annual self-employment income must you register with HMRC?", opts: ["£500", "£1,000", "£5,000", "£12,570"], a: 1, exp: "The trading allowance is £1,000/year. Earn above this and you must register." },
+            { q: "What is Self Assessment?", opts: ["A way to assess your credit score", "The system self-employed people use to pay tax", "A government grant for freelancers", "A business bank account"], a: 1, exp: "Self Assessment is HMRC's system for calculating and paying tax on self-employed income." },
+            { q: "When is the Self Assessment online filing deadline?", opts: ["31 October", "31 December", "31 January", "5 April"], a: 2, exp: "Online Self Assessment must be filed by 31 January each year." },
+            { q: "What expenses can you deduct from self-employment income?", opts: ["Any personal expense", "Only travel costs", "Anything bought purely for work", "Nothing"], a: 2, exp: "Legitimate business expenses reduce your taxable income." },
+            { q: "What should a freelance invoice always include?", opts: ["Just your name and bank details", "Name, work description, amount, due date, bank details, invoice number", "Only the amount owed", "Your NI number"], a: 1, exp: "A proper invoice protects you legally and makes it easier to chase late payments." },
         ]
     },
     crypto: {
-        title: 'Cryptocurrency', emoji: '₿', color: '#F59E0B',
+        title: 'Cryptocurrency', emoji: '₿',
         theory: [
-            { title: "What is cryptocurrency?", body: "Crypto is digital currency that runs on blockchain — a decentralised record-keeping system with no central bank. Bitcoin was the first (2009). There are now thousands of cryptocurrencies. Most have no intrinsic value and are driven entirely by speculation.", highlight: "Most crypto has no intrinsic value. It's speculation." },
-            { title: "The real risks", body: "Crypto is one of the most volatile asset classes that exists. Bitcoin has dropped 80%+ multiple times. Many altcoins have gone to zero. Scams, hacks, and exchange collapses (like FTX) have wiped out billions in savings. Don't invest money you can't afford to lose.", highlight: "Only ever invest what you can afford to lose entirely." },
-            { title: "Bitcoin vs altcoins", body: "Bitcoin is the most established with the largest market cap. Ethereum has genuine use cases (smart contracts). Most other coins ('altcoins') are highly speculative with little underlying utility. Be extremely cautious about anything marketed aggressively.", highlight: "Be very cautious of aggressively marketed coins." },
-            { title: "How to approach crypto sensibly", body: "If you want crypto exposure, a small allocation (1–5% of your portfolio) in Bitcoin or Ethereum through a regulated exchange (Coinbase, Kraken) is the least risky approach. Never put a significant portion of your savings into crypto.", highlight: "Max 5% of your portfolio. Use regulated exchanges." },
+            { title: "What is cryptocurrency?", body: "Crypto is digital currency running on blockchain — a decentralised record-keeping system with no central bank. Bitcoin was the first (2009). Most cryptocurrencies have no intrinsic value and are driven by speculation.", highlight: "Most crypto has no intrinsic value. It's speculation." },
+            { title: "The real risks", body: "Crypto is one of the most volatile asset classes that exists. Bitcoin has dropped 80%+ multiple times. Many altcoins have gone to zero. Scams and exchange collapses have wiped out billions.", highlight: "Only ever invest what you can afford to lose entirely." },
+            { title: "Bitcoin vs altcoins", body: "Bitcoin is the most established. Ethereum has genuine use cases (smart contracts). Most other coins are highly speculative with little underlying utility. Be extremely cautious about anything marketed aggressively.", highlight: "Be very cautious of aggressively marketed coins." },
+            { title: "How to approach crypto sensibly", body: "If you want crypto exposure, a small allocation (1–5% of your portfolio) in Bitcoin or Ethereum through a regulated exchange (Coinbase, Kraken) is the least risky approach.", highlight: "Max 5% of your portfolio. Use regulated exchanges." },
         ],
         quiz: [
             { q: "What technology does cryptocurrency run on?", opts: ["The internet", "Blockchain", "SWIFT banking network", "Government servers"], a: 1, exp: "Blockchain is a decentralised ledger that records all transactions without a central authority." },
-            { q: "How much has Bitcoin dropped in some of its worst crashes?", opts: ["10-20%", "30-40%", "50-60%", "80%+"], a: 3, exp: "Bitcoin has experienced multiple 80%+ crashes. It's one of the most volatile mainstream assets." },
-            { q: "Which cryptocurrency has the most established use cases beyond speculation?", opts: ["Dogecoin", "Bitcoin", "Ethereum", "Shiba Inu"], a: 2, exp: "Ethereum powers smart contracts and decentralised applications, giving it more underlying utility than most cryptocurrencies." },
-            { q: "What is a sensible maximum crypto allocation for most investors?", opts: ["0% — never invest in crypto", "1-5% of your portfolio", "25% of your portfolio", "50% of your portfolio"], a: 1, exp: "Most financial advisors suggest crypto should be a small, speculative portion of a diversified portfolio — not the core." },
-            { q: "Which of these is a red flag for a crypto investment?", opts: ["It's listed on Coinbase", "It has a long track record", "It's being aggressively marketed with guaranteed returns", "It has a large market cap"], a: 2, exp: "Guaranteed returns don't exist in investing. Aggressive marketing, especially of new coins, is a major scam warning sign." },
+            { q: "How much has Bitcoin dropped in some of its worst crashes?", opts: ["10-20%", "30-40%", "50-60%", "80%+"], a: 3, exp: "Bitcoin has experienced multiple 80%+ crashes." },
+            { q: "Which cryptocurrency has the most established use cases?", opts: ["Dogecoin", "Bitcoin", "Ethereum", "Shiba Inu"], a: 2, exp: "Ethereum powers smart contracts and decentralised applications." },
+            { q: "What is a sensible maximum crypto allocation?", opts: ["0%", "1-5% of your portfolio", "25%", "50%"], a: 1, exp: "Most advisors suggest crypto should be a small, speculative portion of a diversified portfolio." },
+            { q: "Which is a red flag for a crypto investment?", opts: ["Listed on Coinbase", "Long track record", "Aggressive marketing with guaranteed returns", "Large market cap"], a: 2, exp: "Guaranteed returns don't exist. Aggressive marketing of new coins is a major scam warning sign." },
         ]
     },
     first_home: {
-        title: 'Buying Your First Home', emoji: '🔑', color: '#10B981',
+        title: 'Buying Your First Home', emoji: '🔑',
         theory: [
-            { title: "How mortgages work", body: "A mortgage is a loan secured against your property. You borrow the purchase price minus your deposit, then repay over 25–35 years with interest. The bigger your deposit, the lower your interest rate. Most lenders want at least 5–10% of the property value.", highlight: "Bigger deposit = lower interest rate." },
-            { title: "Saving for a deposit", body: "The average first-time buyer deposit in the UK is around 15–20% of the property price. On a £200,000 home, that's £30,000–£40,000. Start saving early in a Lifetime ISA (LISA) — the government adds 25% on top of your contributions.", highlight: "Use a Lifetime ISA — the government adds 25%." },
-            { title: "The Lifetime ISA (LISA)", body: "You can save up to £4,000/year into a LISA and get a 25% government bonus (up to £1,000/year). It can only be used for a first home purchase (up to £450,000) or retirement. Open one before age 40.", highlight: "Free government money for your first home deposit." },
-            { title: "Hidden costs of buying", body: "Beyond the deposit: stamp duty (varies, often zero for first-time buyers under £425,000), solicitor fees (~£1,500–£2,500), survey costs (~£400–£1,500), mortgage arrangement fees, and moving costs. Budget an extra £3,000–£5,000 beyond your deposit.", highlight: "Budget £3,000–£5,000 on top of your deposit for fees." },
+            { title: "How mortgages work", body: "A mortgage is a loan secured against your property. You borrow the purchase price minus your deposit, then repay over 25–35 years with interest. The bigger your deposit, the lower your interest rate.", highlight: "Bigger deposit = lower interest rate." },
+            { title: "Saving for a deposit", body: "The average first-time buyer deposit is around 15–20% of the property price. On a £200,000 home, that's £30,000–£40,000. Start saving early in a Lifetime ISA (LISA) — the government adds 25%.", highlight: "Use a Lifetime ISA — the government adds 25%." },
+            { title: "The Lifetime ISA (LISA)", body: "Save up to £4,000/year into a LISA and get a 25% government bonus (up to £1,000/year). It can only be used for a first home purchase (up to £450,000) or retirement. Open one before age 40.", highlight: "Free government money for your first home deposit." },
+            { title: "Hidden costs of buying", body: "Beyond the deposit: solicitor fees (~£1,500–£2,500), survey costs (~£400–£1,500), mortgage arrangement fees, and moving costs. Budget an extra £3,000–£5,000 beyond your deposit.", highlight: "Budget £3,000–£5,000 on top of your deposit for fees." },
         ],
         quiz: [
-            { q: "What is the minimum deposit most UK mortgage lenders accept?", opts: ["1%", "5%", "15%", "25%"], a: 1, exp: "Most lenders require at least 5% deposit, though 10-15% gets significantly better interest rates." },
-            { q: "What is a Lifetime ISA (LISA)?", opts: ["A savings account for retirement only", "A savings account with a 25% government bonus for first home or retirement", "A mortgage product", "A government loan for first-time buyers"], a: 1, exp: "LISAs give a 25% bonus on savings up to £4,000/year — free money toward your first home deposit." },
-            { q: "What is the maximum annual government bonus on a LISA?", opts: ["£500", "£750", "£1,000", "£2,000"], a: 2, exp: "The government adds 25% on up to £4,000/year = maximum £1,000 bonus per year." },
-            { q: "For most first-time buyers in the UK, how much is stamp duty on properties under £425,000?", opts: ["5% of the purchase price", "2% of the purchase price", "£10,000 flat fee", "Zero"], a: 3, exp: "First-time buyers pay no stamp duty on properties up to £425,000 — a significant saving." },
-            { q: "Beyond the deposit, how much extra should you budget for buying costs?", opts: ["Nothing extra", "£500–£1,000", "£3,000–£5,000", "£10,000+"], a: 2, exp: "Solicitor fees, surveys, mortgage fees, and moving costs typically add £3,000–£5,000 on top of your deposit." },
+            { q: "Minimum deposit most UK mortgage lenders accept?", opts: ["1%", "5%", "15%", "25%"], a: 1, exp: "Most lenders require at least 5% deposit." },
+            { q: "What is a Lifetime ISA (LISA)?", opts: ["A retirement-only account", "A savings account with a 25% government bonus for first home or retirement", "A mortgage product", "A government loan"], a: 1, exp: "LISAs give a 25% bonus on savings up to £4,000/year." },
+            { q: "Maximum annual government bonus on a LISA?", opts: ["£500", "£750", "£1,000", "£2,000"], a: 2, exp: "The government adds 25% on up to £4,000/year = maximum £1,000 bonus." },
+            { q: "For most first-time buyers under £425,000, how much is stamp duty?", opts: ["5%", "2%", "£10,000 flat", "Zero"], a: 3, exp: "First-time buyers pay no stamp duty on properties up to £425,000." },
+            { q: "How much extra should you budget beyond your deposit?", opts: ["Nothing", "£500–£1,000", "£3,000–£5,000", "£10,000+"], a: 2, exp: "Solicitor fees, surveys, mortgage fees, and moving costs typically add £3,000–£5,000." },
         ]
     },
     food: {
-        title: 'Food & Grocery Budgeting', emoji: '🛒', color: '#EC4899',
+        title: 'Food & Grocery Budgeting', emoji: '🛒',
         theory: [
-            { title: "Meal planning: the biggest win", body: "Planning your meals before you shop means you only buy what you'll use, waste almost nothing, and avoid expensive last-minute takeaways. Spend 10 minutes on Sunday planning 5 dinners. It can halve your food bill.", highlight: "10 minutes of planning saves hours of wasted money." },
-            { title: "Own brands are not worse", body: "Supermarket own-brand staples (pasta, rice, tinned tomatoes, flour, oil) are often made in the same factories as premium brands. Switching basics to own-brand can save £30–£50/month with zero quality difference.", highlight: "Own-brand basics are just as good. Seriously." },
-            { title: "Reducing food waste", body: "The average UK household throws away £700 worth of food per year. Use the 'first in, first out' rule (older food at the front). Freeze bread, meat, and leftovers before they go off. Check dates before shopping.", highlight: "Freeze everything before it goes off." },
-            { title: "Batch cooking", body: "Cook a big portion of a cheap, nutritious meal (chilli, curry, soup, pasta sauce) and portion it into the freezer. Grab it instead of buying lunch or ordering a takeaway. One cook session can feed you for a week.", highlight: "Batch cook on Sundays. Eat well all week for £2/meal." },
+            { title: "Meal planning: the biggest win", body: "Planning your meals before you shop means you only buy what you'll use, waste almost nothing, and avoid expensive last-minute takeaways. Spend 10 minutes on Sunday planning 5 dinners.", highlight: "10 minutes of planning saves hours of wasted money." },
+            { title: "Own brands are not worse", body: "Supermarket own-brand staples (pasta, rice, tinned tomatoes, flour, oil) are often made in the same factories as premium brands. Switching basics to own-brand can save £30–£50/month.", highlight: "Own-brand basics are just as good. Seriously." },
+            { title: "Reducing food waste", body: "The average UK household throws away £700 worth of food per year. Use the 'first in, first out' rule — older food at the front. Freeze bread, meat, and leftovers before they go off.", highlight: "Freeze everything before it goes off." },
+            { title: "Batch cooking", body: "Cook a big portion of a cheap, nutritious meal (chilli, curry, soup) and portion it into the freezer. Grab it instead of buying lunch or ordering a takeaway. One cook session can feed you for a week.", highlight: "Batch cook on Sundays. Eat well all week for £2/meal." },
         ],
         quiz: [
-            { q: "What is the biggest benefit of meal planning?", opts: ["You eat more variety", "You only buy what you'll use and reduce waste", "It's faster than not planning", "Supermarkets give discounts for planners"], a: 1, exp: "Meal planning prevents impulse buys, reduces waste, and eliminates expensive last-minute takeaways." },
-            { q: "Are supermarket own-brand products generally worse quality?", opts: ["Yes, always", "No — basics are often made in the same factories", "Only for fresh food", "Yes, but they're worth the saving"], a: 1, exp: "Many supermarket own-brand products are identical to premium brands, sometimes from the same manufacturer." },
-            { q: "How much food does the average UK household waste per year?", opts: ["£100", "£300", "£700", "£1,500"], a: 2, exp: "£700/year is the average — equivalent to around 30% of the food people buy going straight in the bin." },
-            { q: "What does 'first in, first out' mean in the kitchen?", opts: ["Cook the newest food first", "Put older food at the front so you use it first", "Only buy food once a week", "First person in the kitchen cooks"], a: 1, exp: "Keeping older items at the front ensures you use them before they expire, dramatically reducing waste." },
-            { q: "What is the main financial benefit of batch cooking?", opts: ["You need fewer pots and pans", "You can eat well for £1-2/meal instead of buying lunch or takeaways", "Supermarkets offer discounts", "It burns fewer calories"], a: 1, exp: "Batch cooking typically costs £1-2 per meal compared to £5-10 for lunch out or a takeaway — a massive saving over time." },
+            { q: "Biggest benefit of meal planning?", opts: ["More variety", "Only buy what you'll use and reduce waste", "Supermarkets give discounts", "It's faster"], a: 1, exp: "Meal planning prevents impulse buys, reduces waste, and eliminates expensive last-minute takeaways." },
+            { q: "Are supermarket own-brand products generally worse?", opts: ["Yes, always", "No — basics are often made in the same factories", "Only for fresh food", "Yes but worth the saving"], a: 1, exp: "Many own-brand products are identical to premium brands, sometimes from the same manufacturer." },
+            { q: "How much food does the average UK household waste per year?", opts: ["£100", "£300", "£700", "£1,500"], a: 2, exp: "£700/year is the average — around 30% of the food people buy goes in the bin." },
+            { q: "What does 'first in, first out' mean in the kitchen?", opts: ["Cook the newest food first", "Put older food at the front so you use it first", "Only buy food once a week", "First person in the kitchen cooks"], a: 1, exp: "Keeping older items at the front ensures you use them before they expire." },
+            { q: "Main financial benefit of batch cooking?", opts: ["Need fewer pots and pans", "Eat well for £1-2/meal instead of buying lunch or takeaways", "Supermarkets offer discounts", "Burns fewer calories"], a: 1, exp: "Batch cooking typically costs £1-2 per meal compared to £5-10 for lunch out or a takeaway." },
         ]
     },
     travel: {
-        title: 'Travel on a Budget', emoji: '✈️', color: '#6366F1',
+        title: 'Travel on a Budget', emoji: '✈️',
         theory: [
-            { title: "Finding cheap flights", body: "Book flights on Tuesdays or Wednesdays (historically cheaper). Use Google Flights with the 'date grid' to find the cheapest travel days. Set price alerts. Fly from alternative airports. Be flexible — saving £100 by flying a day earlier is always worth it.", highlight: "Flexible dates + Google Flights = much cheaper flights." },
-            { title: "Fee-free travel cards", body: "Using a standard UK debit or credit card abroad typically charges 2.99% on every transaction plus ATM fees. Fee-free cards (Wise, Starling, Chase) charge nothing. Switch before you travel — it takes 10 minutes and saves a lot.", highlight: "Get a Wise or Starling card before every trip abroad." },
-            { title: "Accommodation: smarter choices", body: "Hostels have changed — many now have private rooms for less than a budget hotel. Booking.com, Hostelworld, and Airbnb all worth comparing. Staying slightly outside the city centre often halves accommodation costs with minimal inconvenience.", highlight: "Compare hostels, hotels, and Airbnb every time." },
-            { title: "Student travel discounts", body: "An ISIC card (International Student Identity Card) gets discounts at thousands of attractions, transport services, and accommodation worldwide. Railcards (16-25, 26-30) give 1/3 off UK rail. Tastecard and similar apps for food abroad.", highlight: "ISIC card + 16-25 railcard = discounts everywhere." },
+            { title: "Finding cheap flights", body: "Book flights on Tuesdays or Wednesdays. Use Google Flights with the 'date grid' to find the cheapest travel days. Set price alerts. Be flexible — saving £100 by flying a day earlier is always worth it.", highlight: "Flexible dates + Google Flights = much cheaper flights." },
+            { title: "Fee-free travel cards", body: "Using a standard UK debit card abroad charges 2.99% on every transaction. Fee-free cards (Wise, Starling, Chase) charge nothing. Switch before you travel — it takes 10 minutes and saves a lot.", highlight: "Get a Wise or Starling card before every trip abroad." },
+            { title: "Accommodation: smarter choices", body: "Hostels now have private rooms for less than a budget hotel. Booking.com, Hostelworld, and Airbnb are all worth comparing. Staying slightly outside the city centre often halves accommodation costs.", highlight: "Compare hostels, hotels, and Airbnb every time." },
+            { title: "Student travel discounts", body: "An ISIC card gets discounts at thousands of attractions worldwide. Railcards (16-25, 26-30) give 1/3 off UK rail. Always search for student rates before paying full price.", highlight: "ISIC card + 16-25 railcard = discounts everywhere." },
         ],
         quiz: [
-            { q: "Which days are historically cheapest to book flights?", opts: ["Friday and Saturday", "Tuesday and Wednesday", "Monday and Thursday", "It makes no difference"], a: 1, exp: "Tuesdays and Wednesdays tend to have lower fares as business travellers avoid these days and demand is lower." },
-            { q: "Why should you avoid using a standard UK debit card abroad?", opts: ["It won't be accepted", "It charges ~2.99% foreign transaction fees plus ATM fees", "The exchange rate is bad", "It's unsafe to use abroad"], a: 1, exp: "Standard UK bank cards typically charge 2-3% on every foreign transaction. Fee-free cards like Wise or Starling charge nothing." },
-            { q: "What is a Wise card?", opts: ["A student loyalty card", "A fee-free card that uses the real exchange rate abroad", "A travel insurance product", "A rewards credit card"], a: 1, exp: "Wise is a digital account that lets you spend abroad at the real exchange rate with no foreign transaction fees." },
-            { q: "What discount does a 16-25 Railcard give on UK rail travel?", opts: ["10% off", "20% off", "1/3 off", "50% off"], a: 2, exp: "The 16-25 Railcard gives 1/3 off most rail fares in the UK and costs £30/year — it typically pays for itself in one journey." },
-            { q: "What is an ISIC card?", opts: ["A UK student oyster card", "An International Student Identity Card with global discounts", "A travel insurance card", "A foreign currency card"], a: 1, exp: "The ISIC card is internationally recognised and provides discounts at thousands of venues, transport, and services worldwide." },
+            { q: "Historically cheapest days to book flights?", opts: ["Friday and Saturday", "Tuesday and Wednesday", "Monday and Thursday", "No difference"], a: 1, exp: "Tuesdays and Wednesdays tend to have lower fares as demand is lower." },
+            { q: "Why avoid a standard UK debit card abroad?", opts: ["Won't be accepted", "Charges ~2.99% foreign transaction fees", "Exchange rate is bad", "Unsafe to use"], a: 1, exp: "Standard UK bank cards typically charge 2-3% on every foreign transaction." },
+            { q: "What is a Wise card?", opts: ["A student loyalty card", "A fee-free card that uses the real exchange rate abroad", "A travel insurance product", "A rewards credit card"], a: 1, exp: "Wise lets you spend abroad at the real exchange rate with no foreign transaction fees." },
+            { q: "What discount does a 16-25 Railcard give?", opts: ["10% off", "20% off", "1/3 off", "50% off"], a: 2, exp: "The 16-25 Railcard gives 1/3 off most UK rail fares and costs £30/year." },
+            { q: "What is an ISIC card?", opts: ["A UK student oyster card", "An International Student Identity Card with global discounts", "A travel insurance card", "A foreign currency card"], a: 1, exp: "The ISIC card provides discounts at thousands of venues and services worldwide." },
         ]
     },
     mental_health: {
-        title: 'Mental Health & Money', emoji: '🧠', color: '#14B8A6',
+        title: 'Mental Health & Money', emoji: '🧠',
         theory: [
-            { title: "Money is the #1 cause of stress in the UK", body: "Studies consistently show that financial stress is the leading cause of anxiety and relationship problems in the UK. The stress itself often makes financial decisions worse — avoidance, impulsive spending, and paralysis are all anxiety responses, not character flaws.", highlight: "Financial stress is a mental health issue. Take it seriously." },
-            { title: "Avoidance makes it worse", body: "The most common response to money stress is avoidance — not checking your bank account, ignoring bills, not opening letters. Avoidance feels like relief but compounds the problem. The anxiety of not knowing is almost always worse than the reality.", highlight: "Open the letter. Check the account. It's always better to know." },
-            { title: "Emotional spending", body: "Using spending as an emotional coping mechanism is extremely common, especially under stress or after a bad day. Awareness is the first step. A 24-hour rule (wait before any non-essential purchase over £30) breaks the impulsive cycle.", highlight: "Wait 24 hours before any non-essential purchase." },
-            { title: "Getting help", body: "If debt or financial stress feels overwhelming, free help exists. StepChange (stepchange.org) offers free debt advice. Citizens Advice is free and impartial. Your university likely has a hardship fund and financial advisors. You don't have to figure it out alone.", highlight: "StepChange and Citizens Advice are free. Use them." },
+            { title: "Money is the #1 cause of stress in the UK", body: "Financial stress is the leading cause of anxiety in the UK. The stress itself often makes financial decisions worse — avoidance, impulsive spending, and paralysis are all anxiety responses, not character flaws.", highlight: "Financial stress is a mental health issue. Take it seriously." },
+            { title: "Avoidance makes it worse", body: "The most common response to money stress is avoidance — not checking your bank account, ignoring bills. Avoidance feels like relief but compounds the problem. The anxiety of not knowing is almost always worse than the reality.", highlight: "Open the letter. Check the account. It's always better to know." },
+            { title: "Emotional spending", body: "Using spending as an emotional coping mechanism is extremely common. Awareness is the first step. A 24-hour rule (wait before any non-essential purchase over £30) breaks the impulsive cycle.", highlight: "Wait 24 hours before any non-essential purchase." },
+            { title: "Getting help", body: "If debt feels overwhelming, free help exists. StepChange (stepchange.org) offers free debt advice. Citizens Advice is free and impartial. Your university likely has a hardship fund and financial advisors.", highlight: "StepChange and Citizens Advice are free. Use them." },
         ],
         quiz: [
-            { q: "What is the most common emotional response to financial stress?", opts: ["Immediately addressing it", "Avoidance — not checking accounts or opening bills", "Talking to a financial advisor", "Spending more carefully"], a: 1, exp: "Avoidance is the most common response and almost always makes the situation worse. Knowing is always better than not knowing." },
-            { q: "What is emotional spending?", opts: ["Spending on experiences rather than things", "Using purchases as an emotional coping mechanism", "Being emotional when budgeting", "Spending money on others"], a: 1, exp: "Emotional spending uses purchases to manage mood — it provides brief relief but creates financial stress that triggers more emotional spending." },
-            { q: "What is the '24-hour rule' for spending?", opts: ["Only spend money on 24-hour sales", "Wait 24 hours before any non-essential purchase to break impulsive cycles", "Review your budget every 24 hours", "Only buy things available for 24 hours"], a: 1, exp: "Waiting 24 hours before non-essential purchases breaks the impulse cycle. Most urges pass — and if they don't, it was probably worth buying." },
-            { q: "Which free service offers debt advice in the UK?", opts: ["HMRC", "StepChange", "The Financial Conduct Authority", "Companies House"], a: 1, exp: "StepChange (stepchange.org) is a free charity offering debt advice and debt management plans to anyone struggling." },
-            { q: "If you're a student struggling financially, where should you look first?", opts: ["A payday loan company", "Your university's hardship fund and financial advisors", "A credit card", "An overdraft extension"], a: 1, exp: "Most universities have hardship funds, emergency grants, and free financial advisors. These exist specifically for students in difficulty." },
+            { q: "Most common emotional response to financial stress?", opts: ["Immediately addressing it", "Avoidance — not checking accounts or opening bills", "Talking to a financial advisor", "Spending more carefully"], a: 1, exp: "Avoidance is the most common response and almost always makes the situation worse." },
+            { q: "What is emotional spending?", opts: ["Spending on experiences", "Using purchases as an emotional coping mechanism", "Being emotional when budgeting", "Spending money on others"], a: 1, exp: "Emotional spending uses purchases to manage mood but creates financial stress that triggers more spending." },
+            { q: "What is the '24-hour rule'?", opts: ["Only spend money on 24-hour sales", "Wait 24 hours before any non-essential purchase", "Review your budget every 24 hours", "Only buy things on sale for 24 hours"], a: 1, exp: "Waiting 24 hours before non-essential purchases breaks the impulse cycle." },
+            { q: "Which free service offers debt advice in the UK?", opts: ["HMRC", "StepChange", "The Financial Conduct Authority", "Companies House"], a: 1, exp: "StepChange is a free charity offering debt advice to anyone struggling." },
+            { q: "If you're a student struggling financially, where should you look first?", opts: ["A payday loan", "Your university's hardship fund and financial advisors", "A credit card", "An overdraft extension"], a: 1, exp: "Most universities have hardship funds, emergency grants, and free financial advisors." },
         ]
     },
     salary: {
-        title: 'Negotiating Salary', emoji: '🤝', color: '#F97316',
+        title: 'Negotiating Salary', emoji: '🤝',
         theory: [
             { title: "Most people never negotiate", body: "Research shows 60%+ of workers accept the first salary offer without negotiating. Employers typically expect negotiation and build room into their offers. Not asking costs the average person hundreds of thousands over a career.", highlight: "Not negotiating costs you hundreds of thousands over a career." },
-            { title: "Research market rate first", body: "Know your number before you negotiate. Use Glassdoor, LinkedIn Salary, Totaljobs, and industry salary surveys to find the real market rate for your role, location, and experience level. Negotiate from data, not feelings.", highlight: "Know the market rate before you say a number." },
-            { title: "How to start the conversation", body: "After an offer: 'Thank you — I'm really excited about this role. Based on my research into market rates for this position, I was expecting something closer to [X]. Is there flexibility there?' Simple, professional, non-confrontational.", highlight: "Be direct, professional, and cite your research." },
-            { title: "Negotiating beyond salary", body: "If the salary is fixed, negotiate everything else: start date, remote working flexibility, holiday days, professional development budget, sign-on bonus, earlier performance review. Total compensation is more than just salary.", highlight: "If salary is fixed, negotiate everything else." },
+            { title: "Research market rate first", body: "Know your number before you negotiate. Use Glassdoor, LinkedIn Salary, and Totaljobs to find the real market rate for your role, location, and experience level.", highlight: "Know the market rate before you say a number." },
+            { title: "How to start the conversation", body: "After an offer: 'Thank you — I'm really excited about this role. Based on my research into market rates, I was expecting something closer to [X]. Is there flexibility there?' Simple, professional, non-confrontational.", highlight: "Be direct, professional, and cite your research." },
+            { title: "Negotiating beyond salary", body: "If the salary is fixed, negotiate everything else: start date, remote working, holiday days, professional development budget, sign-on bonus, earlier performance review.", highlight: "If salary is fixed, negotiate everything else." },
         ],
         quiz: [
-            { q: "What percentage of workers typically don't negotiate their salary offer?", opts: ["10%", "30%", "60%+", "90%"], a: 2, exp: "Most workers accept first offers without negotiating. Employers typically expect negotiation and leave room in their initial offer." },
-            { q: "What should you do before starting a salary negotiation?", opts: ["Ask your friends what they earn", "Research market rate using Glassdoor, LinkedIn Salary, and industry data", "Decide the maximum you'd accept", "Ask the interviewer what others earn"], a: 1, exp: "Knowing the real market rate for your role gives you a data-backed anchor for your negotiation rather than just guessing." },
-            { q: "What is the best tone to use when negotiating salary?", opts: ["Aggressive and demanding", "Apologetic and uncertain", "Direct, professional, and citing market data", "Vague and non-committal"], a: 2, exp: "Professional directness backed by research is the most effective approach. Apologetic framing undermines your position." },
-            { q: "If an employer says the salary is fixed, what should you do?", opts: ["Accept it immediately", "Reject the offer", "Negotiate other elements: holidays, remote work, bonuses, development budget", "Ask for a written guarantee"], a: 2, exp: "Total compensation includes much more than salary. Remote working, extra holidays, and development budgets all have real monetary value." },
-            { q: "What's the best time to negotiate salary?", opts: ["During the first interview", "After you've received a formal offer", "Before applying", "During your probation period"], a: 1, exp: "Negotiate after you have a formal offer — you have the most leverage at the point where they've chosen you but you haven't yet accepted." },
+            { q: "What percentage of workers don't negotiate their salary?", opts: ["10%", "30%", "60%+", "90%"], a: 2, exp: "Most workers accept first offers. Employers typically expect negotiation and leave room." },
+            { q: "What should you do before starting a salary negotiation?", opts: ["Ask friends what they earn", "Research market rate using Glassdoor, LinkedIn Salary, and industry data", "Decide the max you'd accept", "Ask the interviewer what others earn"], a: 1, exp: "Knowing the real market rate gives you a data-backed anchor for your negotiation." },
+            { q: "Best tone for negotiating salary?", opts: ["Aggressive and demanding", "Apologetic and uncertain", "Direct, professional, citing market data", "Vague and non-committal"], a: 2, exp: "Professional directness backed by research is the most effective approach." },
+            { q: "If an employer says the salary is fixed, what should you do?", opts: ["Accept immediately", "Reject the offer", "Negotiate other elements: holidays, remote work, bonuses", "Ask for a written guarantee"], a: 2, exp: "Total compensation includes much more than salary." },
+            { q: "Best time to negotiate salary?", opts: ["During the first interview", "After you've received a formal offer", "Before applying", "During probation"], a: 1, exp: "Negotiate after a formal offer — you have the most leverage at this point." },
         ]
     },
     scams: {
-        title: 'Scams & Fraud Protection', emoji: '🔒', color: '#EF4444',
+        title: 'Scams & Fraud Protection', emoji: '🔒',
         theory: [
             { title: "Young people are the most targeted", body: "Contrary to popular belief, young people — not the elderly — are now the most common victims of financial scams. Investment scams, fake job offers, and social media fraud disproportionately target under-35s.", highlight: "Young people are the most targeted group for scams." },
-            { title: "Phishing and smishing", body: "Phishing is fake emails pretending to be your bank, HMRC, or a delivery company. Smishing is the same via text. The goal is to steal your login details or get you to transfer money. Your bank will NEVER ask for your PIN or full password.", highlight: "Your bank will never ask for your PIN. Ever." },
-            { title: "Investment scams", body: "Promises of high returns with no risk don't exist. Common formats: crypto pump-and-dump schemes, clone firm scams (pretending to be real FCA-regulated firms), and 'get rich quick' social media ads. If it sounds too good to be true, it always is.", highlight: "High returns + no risk = scam. Always." },
-            { title: "What to do if you've been scammed", body: "Act fast: contact your bank immediately (most have 24/7 fraud lines), report to Action Fraud (0300 123 2040), and report to the FCA if it was an investment scam. Many banks now reimburse authorised push payment fraud victims.", highlight: "Call your bank immediately. Speed matters." },
+            { title: "Phishing and smishing", body: "Phishing is fake emails pretending to be your bank or HMRC. Smishing is the same via text. The goal is to steal your login details or get you to transfer money. Your bank will NEVER ask for your PIN.", highlight: "Your bank will never ask for your PIN. Ever." },
+            { title: "Investment scams", body: "Promises of high returns with no risk don't exist. Common formats: crypto pump-and-dump schemes, clone firm scams, and 'get rich quick' social media ads. If it sounds too good to be true, it always is.", highlight: "High returns + no risk = scam. Always." },
+            { title: "What to do if you've been scammed", body: "Act fast: contact your bank immediately (most have 24/7 fraud lines), report to Action Fraud (0300 123 2040), and report to the FCA if it was an investment scam.", highlight: "Call your bank immediately. Speed matters." },
         ],
         quiz: [
-            { q: "Which age group is most targeted by financial scams?", opts: ["65+", "45-64", "Under 35", "35-44"], a: 2, exp: "Under-35s are now the most commonly targeted group — partly due to higher digital engagement and investment in crypto." },
-            { q: "What is 'smishing'?", opts: ["Phishing via email", "Phishing via text message", "Phishing via phone calls", "Phishing via social media"], a: 1, exp: "Smishing is SMS phishing — fake text messages pretending to be your bank, HMRC, or a delivery company to steal your details." },
-            { q: "Your bank texts asking for your full PIN to verify your identity. What should you do?", opts: ["Provide it — they need it to help you", "Call the number in the text to confirm", "Ignore it — your bank will never ask for your PIN", "Reply asking why they need it"], a: 2, exp: "No legitimate bank will ever ask for your full PIN or password. This is always a scam — report it to your bank immediately." },
-            { q: "An Instagram ad promises 300% returns on a crypto investment with 'no risk'. What is this?", opts: ["A legitimate opportunity", "A regulated investment product", "A scam", "A government scheme"], a: 2, exp: "No investment offers guaranteed high returns with no risk. This is always a scam — likely a pump-and-dump or Ponzi scheme." },
-            { q: "If you've been scammed, what should you do first?", opts: ["Wait to see if the money comes back", "Report to the police in person", "Contact your bank immediately — speed matters", "Post about it on social media"], a: 2, exp: "Contact your bank's fraud team immediately (24/7). The faster you act, the better the chance of recovering funds." },
+            { q: "Which age group is most targeted by financial scams?", opts: ["65+", "45-64", "Under 35", "35-44"], a: 2, exp: "Under-35s are now the most commonly targeted group." },
+            { q: "What is 'smishing'?", opts: ["Phishing via email", "Phishing via text message", "Phishing via phone calls", "Phishing via social media"], a: 1, exp: "Smishing is SMS phishing — fake texts pretending to be your bank or HMRC." },
+            { q: "Your bank texts asking for your full PIN. What should you do?", opts: ["Provide it", "Call the number in the text", "Ignore it — your bank will never ask for your PIN", "Reply asking why they need it"], a: 2, exp: "No legitimate bank will ever ask for your full PIN. This is always a scam." },
+            { q: "An Instagram ad promises 300% returns with 'no risk'. What is this?", opts: ["A legitimate opportunity", "A regulated investment", "A scam", "A government scheme"], a: 2, exp: "No investment offers guaranteed high returns with no risk. This is always a scam." },
+            { q: "If you've been scammed, what should you do first?", opts: ["Wait to see if money comes back", "Report to police in person", "Contact your bank immediately", "Post about it on social media"], a: 2, exp: "Contact your bank's fraud team immediately. The faster you act, the better the chance of recovery." },
         ]
     },
     pension: {
-        title: 'Pension & Retirement', emoji: '🏦', color: '#A855F7',
+        title: 'Pension & Retirement', emoji: '🏦',
         theory: [
-            { title: "Why pensions matter now (even at 20)", body: "Retirement feels 40+ years away, but starting at 22 vs 32 can double your final pension pot — with the same monthly contributions. Thanks to compound growth, every decade you delay roughly doubles the amount you need to save.", highlight: "Starting 10 years earlier can double your pension pot." },
-            { title: "Workplace auto-enrolment", body: "If you earn over £10,000/year and are aged 22–66, your employer must automatically enroll you in a pension. You contribute a minimum of 5%, your employer adds at least 3%. This is free money — opting out means leaving your employer's contribution on the table.", highlight: "Opting out of your workplace pension is turning down free money." },
-            { title: "How employer contributions work", body: "On a £25,000 salary: you contribute 5% = £1,250/year, your employer adds 3% = £750/year. That's £750 of your employer's money, plus tax relief on your contribution. You effectively get £2,000 in pension savings at a personal cost of around £1,000.", highlight: "Employer contributions + tax relief = your money goes further." },
-            { title: "What to do as a student or part-time worker", body: "You might not be auto-enrolled if you earn under £10,000/year. But you can still opt in voluntarily — and if your employer matches, they must contribute. Even small, early contributions matter enormously over 40+ years of growth.", highlight: "Ask to opt in even if you're not auto-enrolled." },
+            { title: "Why pensions matter now (even at 20)", body: "Retirement feels 40+ years away, but starting at 22 vs 32 can double your final pension pot with the same monthly contributions. Every decade you delay roughly doubles the amount you need to save.", highlight: "Starting 10 years earlier can double your pension pot." },
+            { title: "Workplace auto-enrolment", body: "If you earn over £10,000/year and are aged 22–66, your employer must auto-enrol you in a pension. You contribute 5%, your employer adds at least 3%. Opting out means leaving free money on the table.", highlight: "Opting out of your workplace pension is turning down free money." },
+            { title: "How employer contributions work", body: "On a £25,000 salary: you contribute 5% = £1,250/year, your employer adds 3% = £750/year. Plus tax relief on your contribution. You get £2,000 in pension savings at a personal cost of around £1,000.", highlight: "Employer contributions + tax relief = your money goes further." },
+            { title: "What to do as a student or part-time worker", body: "You might not be auto-enrolled if you earn under £10,000/year. But you can opt in voluntarily — and if your employer matches, they must contribute. Even small, early contributions matter enormously.", highlight: "Ask to opt in even if you're not auto-enrolled." },
         ],
         quiz: [
-            { q: "At what annual earnings are UK employers required to auto-enrol employees into a pension?", opts: ["£6,240", "£10,000", "£12,570", "£20,000"], a: 1, exp: "Employers must auto-enrol workers aged 22-66 who earn over £10,000/year into a workplace pension." },
-            { q: "What is the minimum employer pension contribution under auto-enrolment?", opts: ["1%", "2%", "3%", "5%"], a: 2, exp: "Employers must contribute at least 3% of qualifying earnings, on top of your own minimum 5% contribution." },
-            { q: "Why is opting out of a workplace pension a bad idea?", opts: ["Pensions are too risky", "You lose your employer's contributions — free money", "Pension funds always lose money", "You can't access the money until you're 100"], a: 1, exp: "Opting out means your employer keeps their contributions instead of adding them to your pension. It's turning down free money." },
-            { q: "What is the main financial advantage of starting a pension early?", opts: ["Tax rates are lower when young", "Compound growth over decades dramatically increases the final pot", "Government bonuses are higher for young people", "Employer contributions are higher for young employees"], a: 1, exp: "Compound growth means money invested decades earlier grows far more than the same amount invested later. Time is your biggest asset." },
-            { q: "Can you opt into a workplace pension if you earn under £10,000/year?", opts: ["No — you're excluded entirely", "Yes — you can ask to opt in voluntarily", "Only if you're over 25", "Only if your employer agrees in writing"], a: 1, exp: "Workers earning under the threshold can opt in voluntarily. If they do, their employer must still contribute." },
+            { q: "At what annual earnings must employers auto-enrol employees into a pension?", opts: ["£6,240", "£10,000", "£12,570", "£20,000"], a: 1, exp: "Employers must auto-enrol workers aged 22-66 who earn over £10,000/year." },
+            { q: "What is the minimum employer pension contribution?", opts: ["1%", "2%", "3%", "5%"], a: 2, exp: "Employers must contribute at least 3% of qualifying earnings." },
+            { q: "Why is opting out of a workplace pension a bad idea?", opts: ["Pensions are too risky", "You lose your employer's contributions — free money", "Pension funds always lose money", "Can't access until 100"], a: 1, exp: "Opting out means your employer keeps their contributions instead of adding them to your pension." },
+            { q: "Main financial advantage of starting a pension early?", opts: ["Tax rates are lower when young", "Compound growth over decades dramatically increases the final pot", "Government bonuses are higher", "Employer contributions are higher"], a: 1, exp: "Compound growth means money invested decades earlier grows far more than the same amount invested later." },
+            { q: "Can you opt into a workplace pension if you earn under £10,000/year?", opts: ["No — you're excluded", "Yes — you can ask to opt in voluntarily", "Only if over 25", "Only if employer agrees in writing"], a: 1, exp: "Workers earning under the threshold can opt in voluntarily, and employers must still contribute." },
         ]
     }
 };
 
-// ── MODAL STATE ──────────────────────────────────────────────────────────────
-let currentTopic = null;   // which topic is open
-let currentStep  = 0;      // 0 to (theory.length - 1) = theory cards, then quiz questions
-let quizAnswers  = [];     // user's selected answers
-let quizRevealed = [];     // whether each question has been answered
+// ── MODAL STATE ───────────────────────────────────────────────────────────────
+let currentTopic = null;
+let currentStep  = 0;
+let quizAnswers  = [];
+let quizRevealed = [];
 
-// ── OPEN / CLOSE MODAL ───────────────────────────────────────────────────────
+// ── OPEN / CLOSE ──────────────────────────────────────────────────────────────
 function openTopic(id) {
-    currentTopic   = id;
-    currentStep    = 0;
-    const t        = TOPICS[id];
-    quizAnswers    = new Array(t.quiz.length).fill(null);
-    quizRevealed   = new Array(t.quiz.length).fill(false);
+    currentTopic = id;
+    currentStep  = 0;
+    const t      = TOPICS[id];
+    quizAnswers  = new Array(t.quiz.length).fill(null);
+    quizRevealed = new Array(t.quiz.length).fill(false);
 
-    // Set modal header
-    document.getElementById('modal-emoji').textContent   = t.emoji;
-    document.getElementById('modal-title').textContent   = t.title;
-    document.getElementById('modal-header').style.borderBottom = `2px solid ${t.color}`;
-    document.getElementById('modal-progress').style.background = t.color;
+    document.getElementById('modal-emoji').textContent = t.emoji;
+    document.getElementById('modal-title').textContent = t.title;
 
     renderModalStep();
 
-    // Show modal and overlay
     document.getElementById('modal-overlay').classList.add('active');
     document.getElementById('modal').classList.add('active');
-    document.body.style.overflow = 'hidden'; // prevent background scroll
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
@@ -627,51 +861,34 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-// Close modal on Escape key
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// ── RENDER MODAL CONTENT ─────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderModalStep() {
     const t          = TOPICS[currentTopic];
     const totalSteps = t.theory.length + t.quiz.length;
     const pct        = (currentStep / totalSteps) * 100;
-
-    // Update progress bar
-    document.getElementById('modal-progress').style.width = pct + '%';
-
     const isTheory   = currentStep < t.theory.length;
     const quizIdx    = currentStep - t.theory.length;
     const isLastStep = currentStep === totalSteps - 1;
-    const isQuizDone = !isTheory && quizRevealed[quizIdx];
+    const isAnswered = !isTheory && quizRevealed[quizIdx];
 
-    // Update prev button
-    const prevBtn = document.getElementById('modal-prev');
-    prevBtn.disabled = currentStep === 0;
+    document.getElementById('modal-progress').style.width = pct + '%';
+    document.getElementById('modal-prev').disabled = currentStep === 0;
 
-    // Update next button
     const nextBtn = document.getElementById('modal-next');
     if (isTheory) {
         nextBtn.textContent = currentStep === t.theory.length - 1 ? 'Start Quiz →' : 'Next →';
         nextBtn.disabled = false;
     } else {
-        if (!isQuizDone) {
-            nextBtn.textContent = 'Select an answer';
-            nextBtn.disabled = true;
-        } else if (isLastStep) {
-            nextBtn.textContent = 'See Results 🏁';
-            nextBtn.disabled = false;
-        } else {
-            nextBtn.textContent = 'Next →';
-            nextBtn.disabled = false;
-        }
+        if (!isAnswered) { nextBtn.textContent = 'Select an answer'; nextBtn.disabled = true; }
+        else if (isLastStep) { nextBtn.textContent = 'See Results 🏁'; nextBtn.disabled = false; }
+        else { nextBtn.textContent = 'Next →'; nextBtn.disabled = false; }
     }
 
-    // Render body content
-    if (isTheory) {
-        renderTheoryCard(t.theory[currentStep], currentStep, t.theory.length);
-    } else {
-        renderQuizQuestion(t.quiz[quizIdx], quizIdx, t.quiz.length);
-    }
+    isTheory
+        ? renderTheoryCard(t.theory[currentStep], currentStep, t.theory.length)
+        : renderQuizQuestion(t.quiz[quizIdx], quizIdx, t.quiz.length);
 }
 
 function renderTheoryCard(card, idx, total) {
@@ -679,29 +896,22 @@ function renderTheoryCard(card, idx, total) {
         <div class="modal-card-num">Card ${idx + 1} of ${total}</div>
         <h3 class="modal-card-title">${card.title}</h3>
         <p class="modal-card-body">${card.body}</p>
-        <div class="modal-highlight">
-            <span>💡</span>
-            <span>${card.highlight}</span>
-        </div>
+        <div class="modal-highlight"><span>💡</span><span>${card.highlight}</span></div>
     `;
 }
 
 function renderQuizQuestion(q, idx, total) {
     const revealed = quizRevealed[idx];
     const selected = quizAnswers[idx];
-
     const opts = q.opts.map((opt, i) => {
         let cls = 'modal-opt';
         if (revealed) {
-            if (i === q.a)                    cls += ' correct';
+            if (i === q.a)                        cls += ' correct';
             else if (i === selected && i !== q.a) cls += ' wrong';
-            else                              cls += ' dimmed';
-        } else if (selected === i) {
-            cls += ' selected';
-        }
-        return `<button class="${cls}" onclick="selectAnswer(${idx}, ${i})" ${revealed ? 'disabled' : ''}>
-            <span class="modal-opt-letter">${String.fromCharCode(65 + i)}</span>
-            <span>${opt}</span>
+            else                                  cls += ' dimmed';
+        } else if (selected === i) { cls += ' selected'; }
+        return `<button class="${cls}" onclick="selectAnswer(${idx},${i})" ${revealed ? 'disabled' : ''}>
+            <span class="modal-opt-letter">${String.fromCharCode(65+i)}</span><span>${opt}</span>
         </button>`;
     }).join('');
 
@@ -713,7 +923,6 @@ function renderQuizQuestion(q, idx, total) {
     `;
 }
 
-// ── QUIZ INTERACTION ─────────────────────────────────────────────────────────
 function selectAnswer(qIdx, optIdx) {
     if (quizRevealed[qIdx]) return;
     quizAnswers[qIdx]  = optIdx;
@@ -721,34 +930,22 @@ function selectAnswer(qIdx, optIdx) {
     renderModalStep();
 }
 
-// ── NAVIGATION ───────────────────────────────────────────────────────────────
 function modalNav(dir) {
     const t          = TOPICS[currentTopic];
     const totalSteps = t.theory.length + t.quiz.length;
-    const isLastStep = currentStep === totalSteps - 1;
-
-    // If on the last quiz question and going forward, show results
-    if (dir === 1 && isLastStep) {
-        showResults();
-        return;
-    }
-
+    if (dir === 1 && currentStep === totalSteps - 1) { showResults(); return; }
     currentStep = Math.max(0, Math.min(totalSteps - 1, currentStep + dir));
     renderModalStep();
 }
 
-// ── RESULTS ──────────────────────────────────────────────────────────────────
 function showResults() {
     const t     = TOPICS[currentTopic];
-    const score = quizAnswers.filter((a, i) => a === t.quiz[i].a).length;
+    const score = quizAnswers.filter((a,i) => a === t.quiz[i].a).length;
     const total = t.quiz.length;
     const pct   = Math.round((score / total) * 100);
-    const grade = pct === 100 ? '🏆 Perfect!' : pct >= 80 ? '🌟 Great work!' : pct >= 60 ? '👍 Good effort' : '📚 Keep learning';
+    const grade = pct===100?'🏆 Perfect!':pct>=80?'🌟 Great work!':pct>=60?'👍 Good effort':'📚 Keep learning';
 
-    // Full progress bar
     document.getElementById('modal-progress').style.width = '100%';
-
-    // Hide nav buttons on results
     document.getElementById('modal-prev').style.display = 'none';
     document.getElementById('modal-next').style.display = 'none';
 
@@ -761,161 +958,29 @@ function showResults() {
             <div class="modal-grade">${grade}</div>
             <p class="modal-pct">${pct}% correct</p>
         </div>
-
         <div class="modal-breakdown">
-            ${t.quiz.map((q, i) => `
-                <div class="modal-result-row ${quizAnswers[i] === q.a ? 'r-correct' : 'r-wrong'}">
-                    <span class="r-icon">${quizAnswers[i] === q.a ? '✓' : '✗'}</span>
-                    <div>
-                        <div class="r-q">${q.q}</div>
-                        <div class="r-exp">💡 ${q.exp}</div>
-                    </div>
-                </div>
-            `).join('')}
+            ${t.quiz.map((q,i) => `
+                <div class="modal-result-row ${quizAnswers[i]===q.a?'r-correct':'r-wrong'}">
+                    <span class="r-icon">${quizAnswers[i]===q.a?'✓':'✗'}</span>
+                    <div><div class="r-q">${q.q}</div><div class="r-exp">💡 ${q.exp}</div></div>
+                </div>`).join('')}
         </div>
-
         <div class="modal-results-btns">
-            <button class="modal-btn-secondary" onclick="restartTopic()">Try Again</button>
-            <button class="modal-btn-primary" onclick="closeModal()">Back to Topics 🐴</button>
+            <button class="btn-secondary" onclick="restartTopic()">Try Again</button>
+            <button class="btn-primary" onclick="closeModal()" style="flex:1">Back to Topics</button>
         </div>
     `;
 }
 
 function restartTopic() {
     const t = TOPICS[currentTopic];
-    currentStep    = 0;
-    quizAnswers    = new Array(t.quiz.length).fill(null);
-    quizRevealed   = new Array(t.quiz.length).fill(false);
+    currentStep  = 0;
+    quizAnswers  = new Array(t.quiz.length).fill(null);
+    quizRevealed = new Array(t.quiz.length).fill(false);
     document.getElementById('modal-prev').style.display = '';
     document.getElementById('modal-next').style.display = '';
     renderModalStep();
 }
 </script>
-
-<!-- Modal CSS injected here so it works without editing the external stylesheet -->
-<style>
-.modal-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-}
-.modal-overlay.active { display: block; }
-
-.modal {
-    display: none;
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -48%);
-    width: min(680px, 95vw);
-    max-height: 85vh;
-    background: #1E1E2E;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    z-index: 201;
-    overflow: hidden;
-    flex-direction: column;
-}
-.modal.active {
-    display: flex;
-    animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
-}
-@keyframes modalIn {
-    from { opacity: 0; transform: translate(-50%, -46%); }
-    to   { opacity: 1; transform: translate(-50%, -50%); }
-}
-
-.modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 2px solid #F5C842;
-    flex-shrink: 0;
-}
-.modal-header-left { display: flex; align-items: center; gap: 10px; }
-.modal-emoji { font-size: 1.5rem; }
-.modal-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
-.modal-close {
-    font-size: 1rem; color: #7A7A9A; width: 32px; height: 32px;
-    border-radius: 50%; background: rgba(255,255,255,0.06);
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-}
-.modal-close:hover { color: #F0EDE8; background: rgba(255,255,255,0.12); }
-
-.modal-progress-track { height: 3px; background: rgba(255,255,255,0.06); flex-shrink: 0; }
-.modal-progress-fill  { height: 100%; width: 0; transition: width 0.4s ease; }
-
-.modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.75rem 1.5rem;
-}
-.modal-body::-webkit-scrollbar { width: 4px; }
-.modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
-
-.modal-card-num { font-size: 0.72rem; font-weight: 700; color: #7A7A9A; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 0.75rem; }
-.modal-card-title { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 800; color: #F0EDE8; margin-bottom: 1rem; line-height: 1.3; }
-.modal-card-body { font-size: 0.95rem; color: #C8C8D8; line-height: 1.75; margin-bottom: 1.25rem; }
-.modal-highlight { display: flex; gap: 10px; background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 12px; padding: 0.875rem 1rem; }
-.modal-highlight span:last-child { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: #F5C842; line-height: 1.5; }
-
-.modal-opts { display: flex; flex-direction: column; gap: 9px; margin-bottom: 1rem; }
-.modal-opt {
-    display: flex; align-items: center; gap: 12px;
-    background: #252538; border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px; padding: 0.875rem 1rem;
-    text-align: left; cursor: pointer; transition: all 0.2s; width: 100%;
-    color: #F0EDE8; font-size: 0.92rem;
-}
-.modal-opt:hover:not(:disabled) { border-color: rgba(255,255,255,0.18); background: #2d2d42; }
-.modal-opt.selected { border-color: #F5C842; background: rgba(245,200,66,0.08); }
-.modal-opt.correct  { border-color: #10B981 !important; background: rgba(16,185,129,0.08) !important; }
-.modal-opt.wrong    { border-color: #EF4444 !important; background: rgba(239,68,68,0.06) !important; }
-.modal-opt.dimmed   { opacity: 0.4; }
-.modal-opt-letter {
-    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.06); border-radius: 8px;
-    font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; color: #7A7A9A;
-    flex-shrink: 0; transition: all 0.2s;
-}
-.modal-opt.selected .modal-opt-letter { background: #F5C842; color: #0A0A0F; }
-.modal-opt.correct  .modal-opt-letter { background: #10B981; color: #fff; }
-.modal-opt.wrong    .modal-opt-letter { background: #EF4444; color: #fff; }
-.modal-explanation { background: #252538; border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.85rem; color: #7A7A9A; line-height: 1.5; }
-
-/* Results */
-.modal-results { text-align: center; padding: 1rem 0 1.5rem; }
-.modal-score-circle { width: 100px; height: 100px; border-radius: 50%; background: rgba(245,200,66,0.1); border: 3px solid #F5C842; display: flex; align-items: baseline; justify-content: center; margin: 0 auto 1rem; }
-.modal-score-num { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: #F5C842; }
-.modal-score-tot { font-family: 'Syne', sans-serif; font-size: 1.2rem; color: #C9A227; }
-.modal-grade { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.25rem; }
-.modal-pct { color: #7A7A9A; font-size: 0.9rem; }
-.modal-breakdown { display: flex; flex-direction: column; gap: 8px; margin-top: 1rem; }
-.modal-result-row { display: flex; gap: 10px; border-radius: 10px; padding: 0.75rem 1rem; }
-.r-correct { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); }
-.r-wrong   { background: rgba(239,68,68,0.06);  border: 1px solid rgba(239,68,68,0.18); }
-.r-icon    { font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-.r-correct .r-icon { color: #10B981; }
-.r-wrong   .r-icon { color: #EF4444; }
-.r-q  { font-size: 0.88rem; font-weight: 500; margin-bottom: 3px; }
-.r-exp { font-size: 0.8rem; color: #7A7A9A; line-height: 1.5; }
-.modal-results-btns { display: flex; gap: 10px; margin-top: 1.5rem; }
-
-.modal-footer {
-    display: flex; gap: 10px;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-}
-.modal-btn-secondary { font-size: 0.9rem; font-weight: 600; color: #7A7A9A; background: #252538; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 0.7rem 1.25rem; transition: all 0.2s; }
-.modal-btn-secondary:hover:not(:disabled) { color: #F0EDE8; }
-.modal-btn-secondary:disabled { opacity: 0.3; cursor: not-allowed; }
-.modal-btn-primary { flex: 1; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: #0A0A0F; background: #F5C842; border-radius: 10px; padding: 0.7rem; transition: all 0.2s; }
-.modal-btn-primary:hover:not(:disabled) { background: #FFD54F; transform: translateY(-1px); }
-.modal-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-</style>
 
 {% endblock %}

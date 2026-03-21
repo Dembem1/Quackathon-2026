@@ -7,95 +7,106 @@ app.secret_key = "secret"
 
 DB = "database.db"
 
-# ---------------- MOCK USERS ----------------
-users = {
-    "oleksii": {
-        "email": "oleksii@test.com",
-        "password": "1234",
-        "role": "user",
-        "balance": 1000
-    },
-    "olivia": {
-        "email": "olivia@test.com",
-        "password": "admin",
-        "role": "admin",
-        "balance": 1000
-    }
-}
-
-# ---------------- CONTEXT ----------------
-@app.context_processor
-def inject_user():
-    username = request.view_args.get("username") if request.view_args else None
-
-    if username and username in users:
-        user = users.get(username)
-
-        return dict(
-            current_user=username,
-            balance=user["balance"],
-            role=user["role"]
-        )
-
-    return dict(current_user=None, balance=None, role=None)
-
-
 # ---------------- DATABASE ----------------
 def get_db():
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     return conn
 
-
 def init_db():
     conn = get_db()
     cur = conn.cursor()
 
+    # USERS
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        email TEXT,
+        password TEXT,
+        balance REAL DEFAULT 0,
+        savings REAL DEFAULT 0,
+        streak INTEGER DEFAULT 0,
+        last_active TEXT
+    )
+    """)
+
+    # EXPENSES
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expenses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
         amount REAL,
         category TEXT,
-        date TEXT
+        date TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     )
     """)
 
+    # INCOME
     cur.execute("""
     CREATE TABLE IF NOT EXISTS income (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
         amount REAL,
         saved REAL,
-        date TEXT
+        date TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     )
     """)
 
+    # GOALS
     cur.execute("""
     CREATE TABLE IF NOT EXISTS goals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
         target REAL,
         current REAL,
-        completed INTEGER
+        completed INTEGER,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     )
     """)
 
+    # SUBSCRIPTIONS
     cur.execute("""
     CREATE TABLE IF NOT EXISTS subscriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
         name TEXT,
-        cost REAL
+        cost REAL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     )
     """)
 
+    # TODO
     cur.execute("""
     CREATE TABLE IF NOT EXISTS todo (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        text TEXT
+        user_id INTEGER,
+        text TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     )
     """)
 
     conn.commit()
     conn.close()
 
+# ---------------- HELPERS ----------------
+def get_user_id(username):
+    conn = get_db()
+    user = conn.execute(
+        "SELECT id FROM users WHERE username = ?",
+        (username,)
+    ).fetchone()
+    conn.close()
+
+    return user["id"] if user else None
+
+
+@app.context_processor
+def inject_user():
+    username = request.view_args.get("username") if request.view_args else None
+    return dict(current_user=username)
 
 # ---------------- STREAK ----------------
 def update_streak():
@@ -117,16 +128,17 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    if not username or not password:
-        flash("Fill all fields", "warning")
-        return redirect(url_for("index"))
+    conn = get_db()
+    user = conn.execute(
+        "SELECT * FROM users WHERE username=? AND password=?",
+        (username, password)
+    ).fetchone()
+    conn.close()
 
-    user = users.get(username)
-
-    if user and user["password"] == password:
+    if user:
         return redirect(url_for("dashboard", username=username))
 
-    flash("Invalid credentials", "danger")
+    flash("Invalid login", "danger")
     return redirect(url_for("index"))
 
 
@@ -139,22 +151,23 @@ def register():
         password = request.form.get("password")
 
         if not username or not email or not password:
-            flash("All fields required", "warning")
+            flash("Fill all fields", "warning")
             return redirect(url_for("register"))
 
-        if username in users:
-            flash("Username exists", "danger")
-            return redirect(url_for("register"))
+        conn = get_db()
 
-        users[username] = {
-            "email": email,
-            "password": password,
-            "role": "user",
-            "balance": 1000
-        }
+        try:
+            conn.execute(
+                "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+                (username, email, password)
+            )
+            conn.commit()
+            flash("Registered successfully", "success")
+        except:
+            flash("Username already exists", "danger")
 
-        flash("Registered успешно", "success")
-        return redirect(url_for("dashboard"))
+        conn.close()
+        return redirect(url_for("index"))
 
     return render_template("register.html")
 
@@ -162,37 +175,42 @@ def register():
 # DASHBOARD
 @app.route("/dashboard/<username>")
 def dashboard(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
 
-    expenses = conn.execute("SELECT * FROM expenses").fetchall()
-    income = conn.execute("SELECT * FROM income").fetchall()
-    subs = conn.execute("SELECT * FROM subscriptions").fetchall()
+    expenses = conn.execute(
+        "SELECT * FROM expenses WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
 
-    total_exp = sum([e["amount"] for e in expenses])
-    total_inc = sum([i["amount"] for i in income])
-    sub_cost = sum([s["cost"] for s in subs])
+    income = conn.execute(
+        "SELECT * FROM income WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
+    subscriptions = conn.execute(
+        "SELECT * FROM subscriptions WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
 
     conn.close()
 
-    return render_template(
-        "dashboard.html",
-        username=username,
-        expenses=total_exp,
-        income=total_inc,
-        subscriptions=sub_cost
-    )
+    return render_template("dashboard.html", username=username, expenses=expenses, income=income, subscriptions=subscriptions)
 
 
 # EXPENSES
 @app.route("/expenses/<username>", methods=["GET", "POST"])
 def expenses(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
-    conn = get_db()
+    conn = get_db()  # ✅ MOVE THIS HERE (before POST)
 
     if request.method == "POST":
         amount = request.form.get("amount")
@@ -200,20 +218,26 @@ def expenses(username):
 
         if amount and category:
             conn.execute(
-                "INSERT INTO expenses (amount, category, date) VALUES (?, ?, ?)",
-                (float(amount), category, datetime.utcnow().isoformat())
+                "INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)",
+                (user_id, float(amount), category, datetime.utcnow().isoformat())
             )
             conn.commit()
 
-    data = conn.execute("SELECT * FROM expenses").fetchall()
+    data = conn.execute(
+        "SELECT * FROM expenses WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
     conn.close()
 
     return render_template("expenses.html", data=data, username=username)
 
-# income
+# INCOME
 @app.route("/income/<username>", methods=["GET", "POST"])
 def income(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
@@ -224,19 +248,26 @@ def income(username):
 
         if amount and saved:
             conn.execute(
-                "INSERT INTO income (amount, saved, date) VALUES (?, ?, ?)",
-                (float(amount), float(saved), datetime.utcnow().isoformat())
+                "INSERT INTO income (user_id, amount, saved, date) VALUES (?, ?, ?, ?)",
+                (user_id, float(amount), float(saved), datetime.utcnow().isoformat())
             )
             conn.commit()
 
-    data = conn.execute("SELECT * FROM income").fetchall()
+    data = conn.execute(
+        "SELECT * FROM income WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
     conn.close()
 
     return render_template("income.html", data=data, username=username)
 
+# GOALS
 @app.route("/goals/<username>", methods=["GET", "POST"])
 def goals(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
@@ -246,19 +277,26 @@ def goals(username):
 
         if target:
             conn.execute(
-                "INSERT INTO goals (target, current, completed) VALUES (?, 0, 0)",
-                (float(target),)
+                "INSERT INTO goals (user_id, target, current, completed) VALUES (?, ?, 0, 0)",
+                (user_id, float(target))
             )
             conn.commit()
 
-    data = conn.execute("SELECT * FROM goals").fetchall()
+    data = conn.execute(
+        "SELECT * FROM goals WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
     conn.close()
 
     return render_template("goals.html", data=data, username=username)
 
+# SUBSCRIPTIONS
 @app.route("/subscriptions/<username>", methods=["GET", "POST"])
 def subscriptions(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
@@ -269,12 +307,16 @@ def subscriptions(username):
 
         if name and cost:
             conn.execute(
-                "INSERT INTO subscriptions (name, cost) VALUES (?, ?)",
-                (name, float(cost))
+                "INSERT INTO subscriptions (user_id, name, cost) VALUES (?, ?, ?)",
+                (user_id, name, float(cost))
             )
             conn.commit()
 
-    data = conn.execute("SELECT * FROM subscriptions").fetchall()
+    data = conn.execute(
+        "SELECT * FROM subscriptions WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
     conn.close()
 
     return render_template("subscriptions.html", data=data, username=username)
@@ -282,7 +324,9 @@ def subscriptions(username):
 # TODO
 @app.route("/todo/<username>", methods=["GET", "POST"])
 def todo(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
@@ -292,12 +336,16 @@ def todo(username):
 
         if text:
             conn.execute(
-                "INSERT INTO todo (text) VALUES (?)",
-                (text,)
+                "INSERT INTO todo (user_id, text) VALUES (?, ?)",
+                (user_id, text)
             )
             conn.commit()
 
-    data = conn.execute("SELECT * FROM todo").fetchall()
+    data = conn.execute(
+        "SELECT * FROM todo WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
     conn.close()
 
     return render_template("todo.html", data=data, username=username)
@@ -305,7 +353,9 @@ def todo(username):
 # LEARN
 @app.route("/learn/<username>")
 def learn(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
     return render_template("learn.html", username=username)
@@ -314,10 +364,19 @@ def learn(username):
 # PROFILE
 @app.route("/profile/<username>")
 def profile(username):
-    if username not in users:
+    user_id = get_user_id(username)
+
+    if not user_id:
         return redirect(url_for("index"))
 
-    return render_template("profile.html", username=username)
+    conn = get_db()
+    user = conn.execute(
+        "SELECT * FROM users WHERE id=?",
+        (user_id,)
+    ).fetchone()
+    conn.close()
+
+    return render_template("profile.html", username=username, user=user)
 
 
 # ---------------- RUN ----------------
