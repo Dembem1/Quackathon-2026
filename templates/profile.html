@@ -7,11 +7,34 @@
 {% endblock %}
 
 {% block content %}
-<h1>Profile</h1>
+<div class="container">
+    
+    <div class="dashboard-header">
+        <h1>Your Profile</h1>
+        <p>View your account details and current status.</p>
+    </div>
 
-<p>Username: {{ current_user }}</p>
-<p>Balance: {{ balance }}</p>
-<p>Role: {{ role }}</p>
+    <div class="form-card" style="border-top-color: #2D2D2D; max-width: 500px; margin: 0 auto;">
+        
+        <div style="margin-bottom: 24px;">
+            <label style="display: block; font-size: 14px; color: #7A7A7A; margin-bottom: 4px; font-weight: 500;">Username</label>
+            <div style="font-size: 18px; color: #2D2D2D; font-weight: 500;">{{ current_user }}</div>
+        </div>
 
-<a href="/">Logout</a>
+        <div style="margin-bottom: 24px;">
+            <label style="display: block; font-size: 14px; color: #7A7A7A; margin-bottom: 4px; font-weight: 500;">Total Balance</label>
+            <div style="font-size: 18px; color: #2D2D2D; font-weight: 500;">${{ "{:,.2f}".format(balance|float) }}</div>
+        </div>
+
+        <div style="margin-bottom: 32px;">
+            <label style="display: block; font-size: 14px; color: #7A7A7A; margin-bottom: 4px; font-weight: 500;">Account Role</label>
+            <div style="font-size: 18px; color: #2D2D2D; font-weight: 500; text-transform: capitalize;">{{ role }}</div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #E8E5E1; margin-bottom: 24px;">
+
+        <a href="/" class="btn-secondary" style="color: #BA827A; border-color: #BA827A; width: 100%; box-sizing: border-box;">Logout</a>
+    </div>
+
+</div>
 {% endblock %}
