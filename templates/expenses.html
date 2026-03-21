@@ -7,56 +7,26 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<h1>Expenses</h1>
+
+<form method="POST">
+    <input type="number" step="0.01" name="amount" placeholder="Amount" required>
     
-    <div class="dashboard-header">
-        <h1>Log an Expense</h1>
-        <p>Track your spending to stay on top of your budget.</p>
-    </div>
+    <select name="category">
+        <option>Food</option>
+        <option>Rent</option>
+        <option>Transport</option>
+        <option>Fun</option>
+        <option>Other</option>
+    </select>
 
-    <div class="form-card">
-        <form method="POST">
-            <div class="form-group">
-                <label>Amount ($)</label>
-                <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
-            </div>
-            
-            <div class="form-group">
-                <label>Category</label>
-                <select name="category" class="form-control">
-                    <option>Food & Dining</option>
-                    <option>Rent & Utilities</option>
-                    <option>Transportation</option>
-                    <option>Entertainment</option>
-                    <option>Other</option>
-                </select>
-            </div>
+    <button type="submit">Add</button>
+</form>
 
-            <button type="submit" class="btn-primary">Add Expense</button>
-        </form>
-    </div>
-
-    <h3 class="section-title">Recent Expenses</h3>
-    
-    <div class="transaction-list">
-        {% if data %}
-            {% for e in data %}
-                <div class="transaction-item">
-                    <div class="tx-details">
-                        <h4>{{ e.category }}</h4>
-                        <p>{{ e.date }}</p>
-                    </div>
-                    <div class="tx-amount">
-                        -${{ "{:,.2f}".format(e.amount|float) }}
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="empty-state" style="padding: 32px; text-align: center; color: #7A7A7A;">
-                No expenses logged yet.
-            </div>
-        {% endif %}
-    </div>
-
-</div>
+<h3>All Expenses</h3>
+<ul>
+    {% for e in data %}
+        <li>{{ e.amount }} - {{ e.category }} - {{ e.date }}</li>
+    {% endfor %}
+</ul>
 {% endblock %}

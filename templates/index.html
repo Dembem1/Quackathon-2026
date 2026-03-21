@@ -1,36 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Finance App{% endblock %}</title>
+{% extends "layout.html" %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+{% block title %}Login{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <!-- block to link a navbar-->
-    {% block navbar %}{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <h1>Login</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="flash-container">
-        {% for category, message in messages %}
-            <p class="flash {{ category }}">{{ message }}</p>
-        {% endfor %}
-        </div>
-    {% endif %}
-    {% endwith %}
+    <form method="POST" action="/login">
+    <label>Username:</label><br>
+    <input type="text" name="username" required><br><br>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <label>Password:</label><br>
+    <input type="password" name="password" required><br><br>
 
-    {% include "footer.html" %}
+    <button type="submit">Login</button>
+    </form>
 
-    <!-- a block of script, to add any js script that's required on the page -->
-    {% block scripts %}{% endblock %}
-</body>
-</html>
+    <p>Don't have an account?</p>
+    <a href="/register">Register</a>
+</div>
+{% endblock %}

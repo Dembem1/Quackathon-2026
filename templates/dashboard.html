@@ -7,35 +7,21 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-<div class="dashboard-header">
-    <h1>Dashboard</h1>
-    <p>Welcome back, {{ current_user }}</p>
-</div>
+<h1>Dashboard</h1>
 
-<h3 class="section-title">Overview</h3>
-<div class="overview-grid">
-    <div class="stat-card income">
-        <div class="stat-label">Total Income</div>
-        <div class="stat-value">${{ income }}</div>
-    </div>
+<p>Welcome, {{ current_user }}</p>
 
-    <div class="stat-card expense">
-        <div class="stat-label">Total Expenses</div>
-        <div class="stat-value">${{ expenses }}</div>
-    </div>
+<h3>Overview</h3>
+<ul>
+    <li>Total Income: {{ income }}</li>
+    <li>Total Expenses: {{ expenses }}</li>
+    <li>Subscriptions: {{ subscriptions }}</li>
+</ul>
 
-    <div class="stat-card subs">
-        <div class="stat-label">Subscriptions</div>
-        <div class="stat-value">${{ subscriptions }}</div>
-    </div>
-</div>
-
-<h3 class="section-title">Quick Actions</h3>
-<div class="action-grid">
-    <a href="/expenses/{{ current_user }}" class="action-btn">Add Expense</a>
-    <a href="/income/{{ current_user }}" class="action-btn">Add Income</a>
-    <a href="/goals/{{ current_user }}" class="action-btn">Set Goal</a>
-</div>
-</div>
+<h3>Quick Actions</h3>
+<ul>
+    <li><a href="/expenses/{{ current_user }}">Add Expense</a></li>
+    <li><a href="/income/{{ current_user }}">Add Income</a></li>
+    <li><a href="/goals/{{ current_user }}">Set Goal</a></li>
+</ul>
 {% endblock %}

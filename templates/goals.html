@@ -7,47 +7,17 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    
-    <div class="dashboard-header">
-        <h1>Financial Goals</h1>
-        <p>Set targets and track your progress towards them.</p>
-    </div>
+<h1>Goals</h1>
 
-    <div class="form-card" style="border-top-color: #C29B62;">
-        <form method="POST">
-            <div class="form-group">
-                <label>Target Amount ($)</label>
-                <input type="number" step="0.01" name="target" class="form-control" placeholder="0.00" required>
-            </div>
-            
-            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">Add Goal</button>
-        </form>
-    </div>
+<form method="POST">
+    <input type="number" step="0.01" name="target" placeholder="Target amount" required>
+    <button type="submit">Add Goal</button>
+</form>
 
-    <h3 class="section-title">Your Goals</h3>
-    
-    <div class="transaction-list">
-        {% if data %}
-            {% for g in data %}
-                <div class="transaction-item">
-                    <div class="tx-details">
-                        <h4>Goal Target: ${{ "{:,.2f}".format(g.target|float) }}</h4>
-                        
-                        <p>Status: {% if g.completed %}Completed 🎉{% else %}In Progress{% endif %}</p>
-                    </div>
-                    
-                    <div class="tx-amount" style="color: #2D2D2D;">
-                        ${{ "{:,.2f}".format(g.current|float) }} saved
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="empty-state" style="padding: 32px; text-align: center; color: #7A7A7A;">
-                No goals set yet. Start dreaming big!
-            </div>
-        {% endif %}
-    </div>
-
-</div>
+<h3>Your Goals</h3>
+<ul>
+    {% for g in data %}
+        <li>Target: {{ g.target }} | Current: {{ g.current }} | Done: {{ g.completed }}</li>
+    {% endfor %}
+</ul>
 {% endblock %}
