@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}Income{% endblock %}
+
+{% block navbar %}
+    {% include "navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<h1>Income</h1>
+
+<form method="POST">
+    <input type="number" step="0.01" name="amount" placeholder="Amount" required>
+    <input type="number" step="0.01" name="saved" placeholder="Saved amount" required>
+    <button type="submit">Add</button>
+</form>
+
+<h3>All Income</h3>
+<ul>
+    {% for i in data %}
+        <li>{{ i.amount }} (saved: {{ i.saved }}) - {{ i.date }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

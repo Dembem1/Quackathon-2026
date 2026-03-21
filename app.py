@@ -195,22 +195,22 @@ def expenses(username):
     conn = get_db()
 
     if request.method == "POST":
-        amount = float(request.form["amount"])
-        category = request.form["category"]
+        amount = request.form.get("amount")
+        category = request.form.get("category")
 
-        conn.execute(
-            "INSERT INTO expenses (amount, category, date) VALUES (?, ?, ?)",
-            (amount, category, datetime.utcnow().isoformat())
-        )
-        conn.commit()
+        if amount and category:
+            conn.execute(
+                "INSERT INTO expenses (amount, category, date) VALUES (?, ?, ?)",
+                (float(amount), category, datetime.utcnow().isoformat())
+            )
+            conn.commit()
 
     data = conn.execute("SELECT * FROM expenses").fetchall()
     conn.close()
 
     return render_template("expenses.html", data=data, username=username)
 
-
-# INCOME
+# income
 @app.route("/income/<username>", methods=["GET", "POST"])
 def income(username):
     if username not in users:
@@ -219,22 +219,21 @@ def income(username):
     conn = get_db()
 
     if request.method == "POST":
-        amount = float(request.form["amount"])
-        saved = float(request.form["saved"])
+        amount = request.form.get("amount")
+        saved = request.form.get("saved")
 
-        conn.execute(
-            "INSERT INTO income (amount, saved, date) VALUES (?, ?, ?)",
-            (amount, saved, datetime.utcnow().isoformat())
-        )
-        conn.commit()
+        if amount and saved:
+            conn.execute(
+                "INSERT INTO income (amount, saved, date) VALUES (?, ?, ?)",
+                (float(amount), float(saved), datetime.utcnow().isoformat())
+            )
+            conn.commit()
 
     data = conn.execute("SELECT * FROM income").fetchall()
     conn.close()
 
     return render_template("income.html", data=data, username=username)
 
-
-# GOALS
 @app.route("/goals/<username>", methods=["GET", "POST"])
 def goals(username):
     if username not in users:
@@ -243,21 +242,20 @@ def goals(username):
     conn = get_db()
 
     if request.method == "POST":
-        target = float(request.form["target"])
+        target = request.form.get("target")
 
-        conn.execute(
-            "INSERT INTO goals (target, current, completed) VALUES (?, 0, 0)",
-            (target,)
-        )
-        conn.commit()
+        if target:
+            conn.execute(
+                "INSERT INTO goals (target, current, completed) VALUES (?, 0, 0)",
+                (float(target),)
+            )
+            conn.commit()
 
     data = conn.execute("SELECT * FROM goals").fetchall()
     conn.close()
 
     return render_template("goals.html", data=data, username=username)
 
-
-# SUBSCRIPTIONS
 @app.route("/subscriptions/<username>", methods=["GET", "POST"])
 def subscriptions(username):
     if username not in users:
@@ -266,20 +264,20 @@ def subscriptions(username):
     conn = get_db()
 
     if request.method == "POST":
-        name = request.form["name"]
-        cost = float(request.form["cost"])
+        name = request.form.get("name")
+        cost = request.form.get("cost")
 
-        conn.execute(
-            "INSERT INTO subscriptions (name, cost) VALUES (?, ?)",
-            (name, cost)
-        )
-        conn.commit()
+        if name and cost:
+            conn.execute(
+                "INSERT INTO subscriptions (name, cost) VALUES (?, ?)",
+                (name, float(cost))
+            )
+            conn.commit()
 
     data = conn.execute("SELECT * FROM subscriptions").fetchall()
     conn.close()
 
     return render_template("subscriptions.html", data=data, username=username)
-
 
 # TODO
 @app.route("/todo/<username>", methods=["GET", "POST"])
@@ -290,19 +288,19 @@ def todo(username):
     conn = get_db()
 
     if request.method == "POST":
-        text = request.form["text"]
+        text = request.form.get("text")
 
-        conn.execute(
-            "INSERT INTO todo (text) VALUES (?)",
-            (text,)
-        )
-        conn.commit()
+        if text:
+            conn.execute(
+                "INSERT INTO todo (text) VALUES (?)",
+                (text,)
+            )
+            conn.commit()
 
     data = conn.execute("SELECT * FROM todo").fetchall()
     conn.close()
 
     return render_template("todo.html", data=data, username=username)
-
 
 # LEARN
 @app.route("/learn/<username>")

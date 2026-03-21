@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block navbar %}
+    {% include "navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<h1>Profile</h1>
+
+<p>Username: {{ current_user }}</p>
+<p>Balance: {{ balance }}</p>
+<p>Role: {{ role }}</p>
+
+<a href="/">Logout</a>
+{% endblock %}

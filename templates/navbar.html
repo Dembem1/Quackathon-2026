@@ -4,13 +4,13 @@
     </div>
 
     <div class="nav-right">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/expenses">Expenses</a>
-        <a href="/income">Income</a>
-        <a href="/goals">Goals</a>
-        <a href="/subscriptions">Subscriptions</a>
-        <a href="/todo">To-Do</a>
-        <a href="/learn">Learn</a>
-        <a href="/profile">Profile</a>
+        <a href="{{ url_for('dashboard', username=current_user) }}">Dashboard</a>
+        <a href="{{ url_for('expenses', username=current_user) }}">Expenses</a>
+        <a href="{{ url_for('income', username=current_user) }}">Income</a>
+        <a href="{{ url_for('goals', username=current_user) }}">Goals</a>
+        <a href="{{ url_for('subscriptions', username=current_user) }}">Subscriptions</a>
+        <a href="{{ url_for('todo', username=current_user) }}">To-Do</a>
+        <a href="{{ url_for('learn', username=current_user) }}">Learn</a>
+        <a href="{{ url_for('profile', username=current_user) }}">Profile</a>
     </div>
 </nav>

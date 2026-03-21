@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}Goals{% endblock %}
+
+{% block navbar %}
+    {% include "navbar.html" %}
+{% endblock %}
+
+{% block content %}
+<h1>Goals</h1>
+
+<form method="POST">
+    <input type="number" step="0.01" name="target" placeholder="Target amount" required>
+    <button type="submit">Add Goal</button>
+</form>
+
+<h3>Your Goals</h3>
+<ul>
+    {% for g in data %}
+        <li>Target: {{ g.target }} | Current: {{ g.current }} | Done: {{ g.completed }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
