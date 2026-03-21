@@ -7,18 +7,51 @@
 {% endblock %}
 
 {% block content %}
-<h1>Subscriptions</h1>
+<div class="container">
+    
+    <div class="dashboard-header">
+        <h1>Subscriptions</h1>
+        <p>Manage your recurring monthly costs so there are no surprises.</p>
+    </div>
 
-<form method="POST">
-    <input type="text" name="name" placeholder="Name" required>
-    <input type="number" step="0.01" name="cost" placeholder="Monthly cost" required>
-    <button type="submit">Add</button>
-</form>
+    <div class="form-card" style="border-top-color: #BA827A;">
+        <form method="POST">
+            <div class="form-group">
+                <label>Subscription Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g., Netflix, Spotify" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Monthly Cost ($)</label>
+                <input type="number" step="0.01" name="cost" class="form-control" placeholder="0.00" required>
+            </div>
 
-<h3>All Subscriptions</h3>
-<ul>
-    {% for s in data %}
-        <li>{{ s.name }} - {{ s.cost }}</li>
-    {% endfor %}
-</ul>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">Add Subscription</button>
+        </form>
+    </div>
+
+    <h3 class="section-title">All Subscriptions</h3>
+    
+    <div class="transaction-list">
+        {% if data %}
+            {% for s in data %}
+                <div class="transaction-item">
+                    <div class="tx-details">
+                        <h4>{{ s.name }}</h4>
+                        <p>Recurring Monthly</p>
+                    </div>
+                    
+                    <div class="tx-amount" style="color: #BA827A;">
+                        -${{ "{:,.2f}".format(s.cost|float) }} / mo
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state" style="padding: 32px; text-align: center; color: #7A7A7A;">
+                No subscriptions logged yet. Your wallet is safe for now!
+            </div>
+        {% endif %}
+    </div>
+
+</div>
 {% endblock %}
