@@ -484,3 +484,82 @@ button:active {
 .learn-btn:hover {
     background: #1A1A1A;
 }
+
+/* --- ADD THESE TO THE BOTTOM OF YOUR style.css --- */
+
+/* Benchmark navbar button */
+.nav-right a.benchmark-btn {
+    background-color: #C29B62;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-right a.benchmark-btn:hover {
+    background-color: #A6824D;
+    color: #FFFFFF !important;
+}
+
+/* Benchmark simulator */
+.benchmark-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.sim-stats {
+    margin-bottom: 20px;
+}
+
+.sim-progress-wrap {
+    height: 3px;
+    background: #E8E5E1;
+    border-radius: 4px;
+    margin-top: 16px;
+    overflow: hidden;
+}
+
+.sim-progress-bar {
+    height: 100%;
+    background: #C29B62;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+.sim-toast {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    border-left: 4px solid #C29B62;
+    background: #FBF7F1;
+    color: #2D2D2D;
+}
+
+.sim-toast-good {
+    border-left-color: #8CA38D;
+    background: #F0F5F0;
+    color: #2D2D2D;
+}
+
+.sim-toast-bad {
+    border-left-color: #BA827A;
+    background: #FBF0EE;
+    color: #2D2D2D;
+}
+
+.scenario-card {
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(45,45,45,0.06);
+    padding: 24px;
+    margin-bottom: 16px;
+}
+
+.sim-choice:hover {
+    background-color: #FDFCFA;
+    cursor: pointer;
+}

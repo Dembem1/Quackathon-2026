@@ -4,6 +4,7 @@
     </div>
 
     <div class="nav-right">
+        <a href="{{ url_for('benchmark', username=current_user) }}" class="benchmark-btn">Benchmark</a>
         <a href="{{ url_for('dashboard', username=current_user) }}">Dashboard</a>
         <a href="{{ url_for('expenses', username=current_user) }}">Expenses</a>
         <a href="{{ url_for('income', username=current_user) }}">Income</a>
