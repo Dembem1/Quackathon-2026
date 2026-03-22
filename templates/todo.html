@@ -32,12 +32,31 @@
             {% for t in data %}
                 <div class="transaction-item">
                     <div class="tx-details">
-                        <h4 style="margin: 0; color: #2D2D2D; font-weight: 500;">{{ t.text }}</h4>
+                        <h4 style="
+                            margin: 0;
+                            color: #2D2D2D;
+                            font-weight: 500;
+                            {% if t.completed %}text-decoration: line-through; opacity: 0.6;{% endif %}
+                                        ">
+                            {{ t.text }}
+                        </h4>
                     </div>
-                    
-                    <div style="width: 20px; height: 20px; border: 2px solid #E8E5E1; border-radius: 50%; cursor: pointer;"></div>
+
+                    <div style="display:flex; gap:10px; align-items:center;">
+
+                        {% if not t.completed %}
+                        <a href="/complete_task/{{ current_user }}/{{ t.id }}" 
+                        style="width:20px;height:20px;border:2px solid #8CA38D;border-radius:50%;display:inline-block;">
+                        </a>
+                        {% else %}
+                        <div style="width:20px;height:20px;background:#8CA38D;border-radius:50%;"></div>
+                        {% endif %}
+
+                        <a href="/delete_task/{{ current_user }}/{{ t.id }}" 
+                        style="color:#BA827A; font-size:14px;">✕</a>
+                    </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
         {% else %}
             <div class="empty-state" style="padding: 32px; text-align: center; color: #7A7A7A;">
                 All caught up! No pending tasks on your plate.

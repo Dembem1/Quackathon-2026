@@ -73,7 +73,8 @@ def init_db():
     CREATE TABLE IF NOT EXISTS todo (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
-        text TEXT
+        text TEXT,
+        completed INTEGER DEFAULT 0
     )
     """)
 
@@ -519,6 +520,50 @@ def todo(username):
     conn.close()
     return render_template("todo.html", data=data, username=username)
 
+# DELETE TODO
+@app.route("/delete_task/<username>/<int:task_id>")
+def delete_task(username, task_id):
+    user_id = get_user_id(username)
+
+    if not user_id:
+        return redirect(url_for("index"))
+
+    conn = get_db()
+
+    conn.execute(
+        "DELETE FROM todo WHERE id=? AND user_id=?",
+        (task_id, user_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("todo", username=username))
+
+# COMPLETE TASK
+@app.route("/complete_task/<username>/<int:task_id>")
+def complete_task(username, task_id):
+    user_id = get_user_id(username)
+
+    if not user_id:
+        return redirect(url_for("index"))
+
+    conn = get_db()
+
+    conn.execute("""
+        UPDATE todo
+        SET completed = 1
+        WHERE id = ? AND user_id = ?
+    """, (task_id, user_id))
+
+    conn.commit()
+
+    # streak boost
+    update_streak(user_id)
+
+    conn.close()
+
+    return redirect(url_for("todo", username=username))
 
 # LEARN
 @app.route("/learn/<username>")
