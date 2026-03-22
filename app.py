@@ -315,6 +315,17 @@ def update_goal(username, goal_id):
 
     conn = get_db()
 
+    # get user savings
+    user = conn.execute(
+        "SELECT savings FROM users WHERE id=?",
+        (user_id,)
+    ).fetchone()
+
+    if not user or user["savings"] < amount:
+        flash("Not enough savings!", "danger")
+        conn.close()
+        return redirect(url_for("goals", username=username))
+
     goal = conn.execute(
         "SELECT * FROM goals WHERE id=? AND user_id=?",
         (goal_id, user_id)
@@ -324,10 +335,18 @@ def update_goal(username, goal_id):
         new_current = goal["current"] + amount
         completed = 1 if new_current >= goal["target"] else 0
 
+        # update goal
         conn.execute(
             "UPDATE goals SET current=?, completed=? WHERE id=?",
             (new_current, completed, goal_id)
         )
+
+        # subtract from savings
+        conn.execute(
+            "UPDATE users SET savings = savings - ? WHERE id=?",
+            (amount, user_id)
+        )
+
         conn.commit()
 
     conn.close()
@@ -386,10 +405,17 @@ def income(username):
 @app.route("/goals/<username>", methods=["GET", "POST"])
 def goals(username):
     user_id = get_user_id(username)
+
     if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
+
+    # GET USER (this was missing)
+    user = conn.execute(
+        "SELECT * FROM users WHERE id=?",
+        (user_id,)
+    ).fetchone()
 
     if request.method == "POST":
         target = request.form.get("target")
@@ -407,7 +433,13 @@ def goals(username):
     ).fetchall()
 
     conn.close()
-    return render_template("goals.html", data=data, username=username)
+
+    return render_template(
+        "goals.html",
+        data=data,
+        username=username,
+        savings=user["savings"]  # ✅ now works
+    )
 
 
 # SUBSCRIPTIONS
