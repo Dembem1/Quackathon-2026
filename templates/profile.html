@@ -63,11 +63,11 @@
         <!-- STATUS MESSAGE -->
         <div style="text-align: center;">
             {% if user.balance < 0 %}
-                <p class="warning">You're in negative balance — take control!</p>
+                <p class="warning">You're in negative balance - take control!</p>
             {% elif user.savings > user.balance * 0.3 %}
                 <p class="good">Great job! You're building strong savings</p>
             {% else %}
-                <p>Keep going — you're improving your finances</p>
+                <p>Keep going - you're improving your finances</p>
             {% endif %}
         </div>
 

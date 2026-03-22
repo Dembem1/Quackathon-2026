@@ -38,7 +38,7 @@
                 <div class="transaction-item">
                     <div class="tx-details">
                         <h4>Income Logged</h4>
-                        <p>{{ i.date }} • Sent to savings: £{{ "{:,.2f}".format(i.saved|float) }}</p>
+                        <p>{{ i.date[:10] }} • Sent to savings: £{{ "{:,.2f}".format(i.saved|float) }}</p>
                     </div>
                     <div class="tx-amount" style="color: #8CA38D;">
                         +£{{ "{:,.2f}".format(i.amount|float) }}
