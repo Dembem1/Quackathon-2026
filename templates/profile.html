@@ -8,22 +8,72 @@
 
 {% block content %}
 <div class="container">
-    
+   
     <div class="dashboard-header">
         <h1>Your Profile</h1>
-        <p>View your account details and current status.</p>
+        <p>Track your financial progress and habits.</p>
     </div>
 
-    <div class="form-card" style="border-top-color: #2D2D2D; max-width: 500px; margin: 0 auto;">
-        
-        <div style="margin-bottom: 24px;">
-            <label style="display: block; font-size: 14px; color: #7A7A7A; margin-bottom: 4px; font-weight: 500;">Username</label>
-            <div style="font-size: 18px; color: #2D2D2D; font-weight: 500;">{{ current_user }}</div>
+    <!-- MAIN PROFILE CARD -->
+    <div class="form-card" style="border-top-color: #2D2D2D; max-width: 600px; margin: 0 auto;">
+
+        <!-- USER -->
+        <div style="margin-bottom: 20px;">
+            <label class="stat-label">Username</label>
+            <div class="stat-value">{{ current_user }}</div>
         </div>
 
-        <hr style="border: 0; border-top: 1px solid #E8E5E1; margin-bottom: 24px;">
+        <hr>
 
-        <a href="/" class="btn-secondary" style="color: #BA827A; border-color: #BA827A; width: 100%; box-sizing: border-box;">Logout</a>
+        <!-- STATS GRID -->
+        <div class="overview-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px;">
+
+            <div class="stat-card">
+                <div class="stat-label">Balance</div>
+                <div class="stat-value">£{{ user.balance }}</div>
+            </div>
+
+            <div class="stat-card savings">
+                <div class="stat-label">Savings</div>
+                <div class="stat-value">£{{ user.savings }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Tasks Done</div>
+                <div class="stat-value">{{ tasks_done }}</div>
+            </div>
+
+            <div class="streak-card">
+                🔥 {{ user.streak }} day streak
+            </div>
+
+        </div>
+
+        <hr style="margin: 20px 0;">
+
+        <!-- STATUS MESSAGE -->
+        <div style="text-align: center;">
+            {% if user.balance < 0 %}
+                <p class="warning">⚠️ You're in negative balance — take control!</p>
+            {% elif user.savings > user.balance * 0.3 %}
+                <p class="good">💰 Great job! You're building strong savings</p>
+            {% else %}
+                <p>📊 Keep going — you're improving your finances</p>
+            {% endif %}
+        </div>
+
+        <hr style="margin: 20px 0;">
+
+        <!-- LOGOUT -->
+        <a href="/" class="btn-secondary" style="color: #BA827A; border-color: #BA827A; width: 100%; box-sizing: border-box;">
+            Logout
+        </a>
+
+    </div>
+
+    <!-- LEVEL -->
+    <div style="text-align:center; margin-top: 20px;">
+        <p>Level {{ level }}</p>
     </div>
 
 </div>

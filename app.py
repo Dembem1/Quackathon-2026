@@ -579,18 +579,41 @@ def learn(username):
 @app.route("/profile/<username>")
 def profile(username):
     user_id = get_user_id(username)
+
     if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
+
+    # user data
     user = conn.execute(
         "SELECT * FROM users WHERE id=?",
         (user_id,)
     ).fetchone()
+
+    # total completed tasks
+    tasks_done = conn.execute(
+        "SELECT COUNT(*) as count FROM todo WHERE user_id=? AND completed=1",
+        (user_id,)
+    ).fetchone()["count"]
+
     conn.close()
 
-    return render_template("profile.html", user=user, username=username)
+    # simple performance message
+    if user["balance"] > 500:
+        message = "You're doing great 💪"
+    elif user["balance"] > 0:
+        message = "Good progress 👍"
+    else:
+        message = "Let's improve your finances 🚀"
 
+    return render_template(
+        "profile.html",
+        user=user,
+        username=username,
+        tasks_done=tasks_done,
+        message=message, level=user["streak"] // 3 + 1
+    )
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
