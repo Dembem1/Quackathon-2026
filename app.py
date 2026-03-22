@@ -165,7 +165,7 @@ def dashboard(username):
 
     conn = get_db()
 
-    # ✅ GET USER (THIS WAS MISSING)
+    #GET USER
     user = conn.execute(
         "SELECT * FROM users WHERE id=?",
         (user_id,)
@@ -177,7 +177,7 @@ def dashboard(username):
         (user_id,)
     ).fetchall()
 
-    # income (optional, if still used)
+    # income
     income_data = conn.execute(
         "SELECT * FROM income WHERE user_id=?",
         (user_id,)
@@ -209,9 +209,12 @@ def dashboard(username):
 
 
 # EXPENSES
+from collections import defaultdict
+
 @app.route("/expenses/<username>", methods=["GET", "POST"])
 def expenses(username):
     user_id = get_user_id(username)
+
     if not user_id:
         return redirect(url_for("index"))
 
@@ -221,12 +224,21 @@ def expenses(username):
         amount = request.form.get("amount")
         category = request.form.get("category")
 
-        if amount is not None and category:
+        if amount and category:
             conn.execute(
                 "INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)",
                 (user_id, float(amount), category, datetime.utcnow().isoformat())
             )
+
+            # ✅ update balance
+            conn.execute(
+                "UPDATE users SET balance = balance - ? WHERE id=?",
+                (float(amount), user_id)
+            )
+
             conn.commit()
+
+            update_streak(user_id)
 
     data = conn.execute(
         "SELECT * FROM expenses WHERE user_id=?",
@@ -234,8 +246,56 @@ def expenses(username):
     ).fetchall()
 
     conn.close()
-    return render_template("expenses.html", data=data, username=username)
 
+    # ✅ total expenses
+    total_expenses = sum([e["amount"] for e in data])
+
+    # ✅ category breakdown
+    category_totals = defaultdict(float)
+    for e in data:
+        category_totals[e["category"]] += e["amount"]
+
+    labels = list(category_totals.keys())
+    values = list(category_totals.values())
+
+    return render_template(
+        "expenses.html",
+        data=data,
+        username=username,
+        total_expenses=total_expenses,
+        labels=labels,
+        values=values
+    )
+
+@app.route("/update_goal/<username>/<int:goal_id>", methods=["POST"])
+def update_goal(username, goal_id):
+    user_id = get_user_id(username)
+
+    if not user_id:
+        return redirect(url_for("index"))
+
+    amount = float(request.form.get("amount", 0))
+
+    conn = get_db()
+
+    goal = conn.execute(
+        "SELECT * FROM goals WHERE id=? AND user_id=?",
+        (goal_id, user_id)
+    ).fetchone()
+
+    if goal:
+        new_current = goal["current"] + amount
+        completed = 1 if new_current >= goal["target"] else 0
+
+        conn.execute(
+            "UPDATE goals SET current=?, completed=? WHERE id=?",
+            (new_current, completed, goal_id)
+        )
+        conn.commit()
+
+    conn.close()
+
+    return redirect(url_for("goals", username=username))
 
 # INCOME
 @app.route("/income/<username>", methods=["GET", "POST"])

@@ -8,19 +8,20 @@
 
 {% block content %}
 <div class="container">
-    
+   
     <div class="dashboard-header">
         <h1>Log an Expense</h1>
         <p>Track your spending to stay on top of your budget.</p>
     </div>
 
+    <!-- FORM -->
     <div class="form-card">
         <form method="POST">
             <div class="form-group">
-                <label>Amount ($)</label>
+                <label>Amount (£)</label>
                 <input type="number" step="0.01" name="amount" class="form-control" placeholder="0.00" required>
             </div>
-            
+           
             <div class="form-group">
                 <label>Category</label>
                 <select name="category" class="form-control">
@@ -36,27 +37,67 @@
         </form>
     </div>
 
+    <!-- SUMMARY -->
+    <h3 class="section-title">Summary</h3>
+    <div class="overview-grid">
+        <div class="stat-card expense">
+            <div class="stat-label">Total Spent</div>
+            <div class="stat-value">£{{ total_expenses }}</div>
+        </div>
+    </div>
+
+    <!-- CHART -->
+    <h3 class="section-title">Spending by Category</h3>
+    <canvas id="categoryChart"></canvas>
+
+    <!-- LIST -->
     <h3 class="section-title">Recent Expenses</h3>
-    
+   
     <div class="transaction-list">
         {% if data %}
             {% for e in data %}
                 <div class="transaction-item">
                     <div class="tx-details">
                         <h4>{{ e.category }}</h4>
-                        <p>{{ e.date }}</p>
+                        <p>{{ e.date[:10] }}</p>
                     </div>
                     <div class="tx-amount">
-                        -${{ "{:,.2f}".format(e.amount|float) }}
+                        -£{{ "{:,.2f}".format(e.amount|float) }}
                     </div>
                 </div>
             {% endfor %}
         {% else %}
             <div class="empty-state" style="padding: 32px; text-align: center; color: #7A7A7A;">
-                No expenses logged yet.
+                <p>No expenses yet.</p>
+                <p>Start tracking to understand your spending 💡</p>
             </div>
         {% endif %}
     </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('categoryChart');
+
+new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: {{ labels|tojson }},
+        datasets: [{
+            data: {{ values|tojson }},
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4CAF50',
+                '#9966FF'
+            ]
+        }]
+    }
+});
+</script>
 {% endblock %}

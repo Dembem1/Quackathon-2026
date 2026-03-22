@@ -35,11 +35,29 @@
                         <h4>Goal Target: ${{ "{:,.2f}".format(g.target|float) }}</h4>
                         
                         <p>Status: {% if g.completed %}Completed 🎉{% else %}In Progress{% endif %}</p>
+                        
+                        <div style="background:#eee; height:6px; border-radius:6px; margin-top:6px;">
+                            <div style="
+                                width: {{ (g.current / g.target * 100) if g.target > 0 else 0 }}%;
+                                background:#C29B62;
+                                height:6px;
+                                border-radius:6px;">
+                            </div>
+                        </div>
+                    
                     </div>
+                    <p style="font-size: 12px; color: #7A7A7A;">
+                        {{ ((g.current / g.target) * 100) | round(1) if g.target > 0 else 0 }}% completed
+                    </p>
                     
                     <div class="tx-amount" style="color: #2D2D2D;">
                         ${{ "{:,.2f}".format(g.current|float) }} saved
                     </div>
+
+                    <form method="POST" action="/update_goal/{{ current_user }}/{{ g.id }}" style="margin-top:8px;">
+                        <input type="number" step="0.01" name="amount" placeholder="+ add savings" required>
+                        <button type="submit">Add</button>
+                    </form>
                 </div>
             {% endfor %}
         {% else %}
