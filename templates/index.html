@@ -3,20 +3,35 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="auth-container">
-    <h1>Login</h1>
+<div class="logo-reg">
+    <h2 style="margin-bottom: 16px;">FinTracker<span style="color:#C29B62;">.</span></h2>
+</div>
 
-    <form method="POST" action="/login">
-    <label>Username:</label><br>
-    <input type="text" name="username" required><br><br>
+<div class="auth-wrapper">
 
-    <label>Password:</label><br>
-    <input type="password" name="password" required><br><br>
+    <div class="auth-card">
+        <h1>Welcome back</h1>
+        <p class="auth-sub">Log in to continue managing your finances</p>
 
-    <button type="submit">Login</button>
-    </form>
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
 
-    <p>Don't have an account?</p>
-    <a href="/register">Register</a>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn-primary">Login</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account?</p>
+            <a href="/register">Create account</a>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
