@@ -1,0 +1,265 @@
+{% extends "layout.html" %}
+{% block title %}Benchmark{% endblock %}
+{% block navbar %}{% include "navbar.html" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="dashboard-header">
+        <h1>Benchmark</h1>
+        <p>Test your financial decision-making across 12 real-life scenarios.</p>
+    </div>
+
+    <div class="benchmark-wrap">
+
+        <div id="sim-stats" class="sim-stats" style="display:none">
+            <div class="overview-grid" id="stat-cards"></div>
+            <div class="sim-progress-wrap">
+                <div class="sim-progress-bar" id="sim-progress"></div>
+            </div>
+        </div>
+
+        <div id="sim-toast" class="sim-toast" style="display:none"></div>
+
+        <div id="sim-scenario" class="card scenario-card"></div>
+
+        <div id="sim-choices" class="sim-choices"></div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function spend(st, amount) {
+    if (st.savings >= amount) {
+        st.savings -= amount;
+    } else {
+        st.debt += (amount - st.savings);
+        st.savings = 0;
+    }
+}
+
+const scenarios = [
+    { stage:"Student life", q:"Student loan arrives — £1,200. Rent is £350/month for 3 months.", options:[
+        {text:"Budget carefully from day one",      hint:"Tight but in control",          tag:"save",    apply(s){s.savings+=200;s.stress+=5}},
+        {text:"Spend freely, figure it out later",  hint:"Most people do this",           tag:"impulse", apply(s){spend(s,400);s.stress+=15}},
+        {text:"Get a part-time job straight away",  hint:"Less study time, more income",  tag:"balance", apply(s){s.savings+=300;s.stress+=20}},
+    ]},
+    { stage:"Student life", q:"Flatmate wants to split groceries — £25 each vs £45 alone. They're a bit unreliable.", options:[
+        {text:"Split it and save the money",  hint:"Risk: they won't always pay",   tag:"balance", apply(s){s.savings+=60}},
+        {text:"Shop alone, avoid the drama",  hint:"Costs more, no stress",         tag:"save",    apply(s){spend(s,20)}},
+        {text:"Eat out most days",            hint:"£8-12 a meal adds up fast",     tag:"impulse", apply(s){spend(s,180);s.stress-=10}},
+    ]},
+    { stage:"Student life", q:"Summer break: unpaid prestigious internship vs £1,400 paid job.", options:[
+        {text:"Take the internship",   hint:"Future investment, present sacrifice",  tag:"save",    apply(s){spend(s,100);s.stress+=10}},
+        {text:"Take the paid job",     hint:"Real money now",                        tag:"balance", apply(s){s.savings+=900}},
+        {text:"Take the summer off",   hint:"Rest is valid — costly though",         tag:"impulse", apply(s){spend(s,150);s.stress-=20}},
+    ]},
+    { stage:"First job", q:"First paycheck — £1,850/month after tax. How do you handle it?", options:[
+        {text:"Upgrade lifestyle immediately",     hint:"New flat, new wardrobe",            tag:"impulse", apply(s){spend(s,600);s.stress-=10}},
+        {text:"Set up a 50/30/20 budget",          hint:"50% needs, 30% wants, 20% savings", tag:"save",    apply(s){s.savings+=370;s.stress+=5}},
+        {text:"Save 20%, spend the rest freely",   hint:"Simple rule, easy to follow",       tag:"balance", apply(s){s.savings+=200}},
+    ]},
+    { stage:"First job", q:"Rent goes up £100/month. Landlord won't negotiate.", options:[
+        {text:"Accept it and stay",             hint:"Big hit every month",          tag:"impulse", apply(s){spend(s,100);s.stress+=10}},
+        {text:"Find a flatmate to split costs", hint:"Less space, more savings",     tag:"balance", apply(s){s.savings+=60}},
+        {text:"Move to a cheaper place",        hint:"Hassle now, savings forever",  tag:"save",    apply(s){s.savings+=100;s.stress+=10}},
+    ]},
+    { stage:"First job", q:"Close friend needs a £1,500 loan. You have £600 saved.", options:[
+        {text:"Lend it — they'd do the same",      hint:"Most friendly loans are never repaid",  tag:"impulse", apply(s){spend(s,600);s.debt+=900;s.stress+=15}},
+        {text:"Offer £200 as a gift instead",      hint:"Honest about what you can afford",      tag:"balance", apply(s){spend(s,200)}},
+        {text:"Decline — you genuinely can't",     hint:"Real friends understand limits",        tag:"save",    apply(s){s.stress+=10}},
+    ]},
+    { stage:"First job", q:"You get a £2,000 work bonus.", options:[
+        {text:"Blow it on a holiday",              hint:"Great memories, gone in a week",    tag:"impulse", apply(s){spend(s,1800);s.stress-=20}},
+        {text:"Put it all into savings",           hint:"Future you will thank you",         tag:"save",    apply(s){s.savings+=2000;s.stress-=5}},
+        {text:"Split: pay off debt + save rest",   hint:"Balanced and smart",                tag:"balance", apply(s){let pay=Math.min(s.debt,1000);s.debt-=pay;s.savings+=(2000-pay);s.stress-=10}},
+    ]},
+    { stage:"First job", q:"Car breaks down — repair costs £400. You have £300 saved.", options:[
+        {text:"Pay what you can, rest on credit card",  hint:"£100 debt, problem solved",    tag:"balance", apply(s){s.savings=0;s.debt+=100;s.stress+=10}},
+        {text:"Take a payday loan to cover it",         hint:"Very high interest rate",      tag:"impulse", apply(s){s.savings=0;s.debt+=480;s.stress+=20}},
+        {text:"Sell some stuff to cover the gap",       hint:"Short-term sacrifice",         tag:"save",    apply(s){s.savings+=100;spend(s,400);s.stress+=15}},
+    ]},
+    { stage:"First job", q:"Friend says a crypto scheme offers guaranteed 30% monthly returns.", options:[
+        {text:"Invest £500 — sounds legit",          hint:"This is a scam",                           tag:"impulse", apply(s){spend(s,500);s.debt+=200;s.stress+=25}},
+        {text:"Research it first",                   hint:"30% monthly is mathematically impossible", tag:"save",    apply(s){s.stress+=5}},
+        {text:"Ignore it completely",                hint:"Right call",                               tag:"balance", apply(s){}},
+    ]},
+    { stage:"Building wealth", q:"You have £1,000 saved. Where does it go?", options:[
+        {text:"All into a hot stock tip",             hint:"Could 10x or go to zero",      tag:"impulse", apply(s){spend(s,1000)}, delayed:{turns:2,good:{savings:2500},bad:{debt:200},goodText:"Stock exploded — £2,500 back!",badText:"Stock collapsed. Lost everything."}},
+        {text:"Stocks & Shares ISA — index fund",     hint:"Tax-free, boring, effective",  tag:"save",    apply(s){spend(s,800)},  delayed:{turns:2,good:{savings:1300},bad:{savings:600},goodText:"ISA up 18% — £1,300 back.",badText:"Market dipped but recovered — £600 back."}},
+        {text:"High-yield savings account — 4.8%",    hint:"No risk, guaranteed return",   tag:"balance", apply(s){s.savings+=48}},
+    ]},
+    { stage:"Building wealth", q:"Unexpected £900 medical bill. No insurance.", options:[
+        {text:"Pay from savings",                  hint:"This is what savings are for",   tag:"save",    apply(s){spend(s,900);s.stress+=5}},
+        {text:"Credit card, pay it off slowly",    hint:"Interest adds up fast",          tag:"balance", apply(s){s.debt+=980;s.stress+=15}},
+        {text:"Delay treatment",                   hint:"Cheaper now, worse later",       tag:"impulse", apply(s){s.stress+=30;s.health-=20}},
+    ]},
+    { stage:"Building wealth", q:"You're 30. One decision that compounds for 35 years. What's your priority?", options:[
+        {text:"Max out pension contributions",   hint:"Best mathematical long-term move",   tag:"save",    apply(s){s.savings+=600;s.stress+=5}},
+        {text:"Save for a house deposit",        hint:"Tangible, stable asset",             tag:"balance", apply(s){s.savings+=300}},
+        {text:"Live for today — no regrets",     hint:"No cushion but no FOMO either",      tag:"impulse", apply(s){spend(s,600);s.stress-=20}},
+    ]},
+];
+
+let state = {savings:600, stress:25, debt:0, health:100};
+let idx = 0, tags = [], delayed = null, started = false;
+
+function clamp(v,lo,hi){return Math.min(hi,Math.max(lo,v));}
+function fix(){
+    state.savings = clamp(state.savings,0,99999);
+    state.stress  = clamp(state.stress,0,100);
+    state.debt    = clamp(state.debt,0,99999);
+    state.health  = clamp(state.health,0,100);
+}
+
+function getPath(){
+    const s=tags.filter(t=>t==='save').length;
+    const i=tags.filter(t=>t==='impulse').length;
+    const b=tags.filter(t=>t==='balance').length;
+    if(s>i&&s>b) return {label:"Saver",cls:"path-saver"};
+    if(i>s&&i>b) return {label:"Spender",cls:"path-spender"};
+    return {label:"Balanced",cls:"path-balanced"};
+}
+
+function updateStats(){
+    const p = getPath();
+    document.getElementById('sim-stats').style.display = 'block';
+    document.getElementById('stat-cards').innerHTML = `
+        <div class="stat-card savings"><div class="stat-label">Savings</div><div class="stat-value">£${state.savings}</div></div>
+        <div class="stat-card expense"><div class="stat-label">Stress</div><div class="stat-value">${state.stress}%</div></div>
+        <div class="stat-card" style="border-top-color:${state.debt>0?'#BA827A':'#8CA38D'}"><div class="stat-label">Debt</div><div class="stat-value">£${state.debt}</div></div>
+        <div class="stat-card score"><div class="stat-label">Path</div><div class="stat-value" style="font-size:16px">${p.label}</div></div>
+    `;
+    document.getElementById('sim-progress').style.width = Math.round(idx/12*100) + '%';
+}
+
+function showToast(msg, type){
+    const t = document.getElementById('sim-toast');
+    t.textContent = msg;
+    t.className = 'sim-toast sim-toast-' + (type||'neutral');
+    t.style.display = 'block';
+}
+
+function hideToast(){
+    document.getElementById('sim-toast').style.display = 'none';
+}
+
+function showIntro(){
+    document.getElementById('sim-scenario').innerHTML = `
+        <h3 style="margin:0 0 12px;font-size:17px;font-weight:600">How do your financial decisions stack up?</h3>
+        <p style="color:#7A7A7A;font-size:14px;line-height:1.6;margin:0">12 real-life scenarios from student life to building wealth. Every choice affects your savings, stress and debt — and if you can't afford something, the difference goes to debt.</p>
+    `;
+    document.getElementById('sim-choices').innerHTML = `
+        <button class="action-btn" onclick="startGame()" style="display:block;width:100%;text-align:center;margin-top:8px">Start Benchmark</button>
+    `;
+}
+
+function showScenario(toast, toastType){
+    updateStats();
+    if(toast){ showToast(toast, toastType); } else { hideToast(); }
+
+    const s = scenarios[idx];
+    document.getElementById('sim-scenario').innerHTML = `
+        <div style="font-size:12px;color:#7A7A7A;margin-bottom:8px">${s.stage} &middot; ${idx+1} of 12</div>
+        <div style="font-size:15px;font-weight:500;line-height:1.5;color:#2D2D2D">${s.q}</div>
+    `;
+
+    document.getElementById('sim-choices').innerHTML = s.options.map((o,i) => `
+        <div class="transaction-item sim-choice" onclick="pick(${i})" style="cursor:pointer">
+            <div class="tx-details">
+                <h4>${o.text}</h4>
+                <p>${o.hint}</p>
+            </div>
+            <div style="color:#C29B62;font-weight:600;font-size:18px">›</div>
+        </div>
+    `).join('');
+}
+
+function showResult(){
+    const imp=tags.filter(t=>t==='impulse').length;
+    const sav=tags.filter(t=>t==='save').length;
+    const bal=tags.filter(t=>t==='balance').length;
+    const score=clamp(Math.round((sav*10+bal*6+imp*1)/12*10),0,100);
+    const p=getPath();
+    const title=score>=70?'Strong financial habits':score>=45?'Room to improve':'Time for a reset';
+
+    const recs=[];
+    if(imp>3) recs.push({icon:'⚠️',t:'Watch your impulse spending',d:`${imp} impulsive choices. Try waiting 48 hours before any purchase over £100.`});
+    if(sav>=4) recs.push({icon:'✓',t:'Strong saving instincts',d:`You chose the harder option ${sav} times. Automate it on payday.`});
+    if(state.debt>1000) recs.push({icon:'⚠️',t:'Debt needs attention',d:`£${state.debt} in debt. Attack highest interest rate first.`});
+    else if(state.debt>0) recs.push({icon:'→',t:'Some debt to clear',d:`£${state.debt} — aim to clear it within 6 months.`});
+    if(state.stress>70) recs.push({icon:'→',t:'Financial stress is high',d:"A 3-month emergency fund removes most financial anxiety."});
+    if(state.savings<300) recs.push({icon:'⚠️',t:'Savings are very low',d:"Start with £25/week automated."});
+    else if(state.savings>2000) recs.push({icon:'✓',t:'Good savings buffer',d:`£${state.savings} saved. Anything above 3 months expenses should be invested.`});
+    if(recs.length===0) recs.push({icon:'✓',t:'Solid decisions throughout',d:'You balanced risk and reward well. Keep automating good habits.'});
+
+    document.getElementById('sim-stats').style.display = 'none';
+    hideToast();
+
+    document.getElementById('sim-scenario').innerHTML = `
+        <h2 style="margin:0 0 8px;font-size:22px;font-weight:600">${title}</h2>
+        <p style="color:#7A7A7A;margin:0 0 20px;font-size:14px">${p.label} &middot; Score: ${score}/100</p>
+        <div class="overview-grid" style="margin-bottom:20px">
+            <div class="stat-card savings"><div class="stat-label">Final savings</div><div class="stat-value">£${state.savings}</div></div>
+            <div class="stat-card score"><div class="stat-label">Score</div><div class="stat-value">${score}/100</div></div>
+            <div class="stat-card expense"><div class="stat-label">Debt</div><div class="stat-value">£${state.debt}</div></div>
+        </div>
+        <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:#7A7A7A;margin:0 0 8px">Recommendations</h3>
+        <div class="transaction-list">
+            ${recs.map(r=>`
+            <div class="transaction-item">
+                <div class="tx-details">
+                    <h4>${r.t}</h4>
+                    <p>${r.d}</p>
+                </div>
+                <div style="font-size:16px">${r.icon}</div>
+            </div>`).join('')}
+        </div>
+    `;
+
+    document.getElementById('sim-choices').innerHTML = `
+        <button class="action-btn" onclick="restart()" style="display:block;width:100%;text-align:center;margin-top:16px">Play Again</button>
+    `;
+}
+
+function startGame(){ started=true; showScenario(); }
+
+function restart(){
+    state={savings:600,stress:25,debt:0,health:100};
+    idx=0; tags=[]; delayed=null; started=false;
+    showIntro();
+}
+
+function pick(i){
+    const o = scenarios[idx].options[i];
+    tags.push(o.tag);
+    o.apply(state);
+    fix();
+
+    let toast=null, toastType=null;
+    if(delayed){
+        delayed.turns--;
+        if(delayed.turns<=0){
+            const win=Math.random()>.5;
+            const outcome=win?delayed.good:delayed.bad;
+            if(outcome.savings) state.savings+=outcome.savings;
+            if(outcome.debt)    state.debt+=outcome.debt;
+            fix();
+            toast=win?delayed.goodText:delayed.badText;
+            toastType=win?'good':'bad';
+            delayed=null;
+        }
+    }
+    if(o.delayed) delayed={...o.delayed};
+
+    idx++;
+    if(idx>=12||state.health<=0||state.stress>=100){ showResult(); return; }
+    showScenario(toast, toastType);
+}
+
+showIntro();
+</script>
+{% endblock %}
