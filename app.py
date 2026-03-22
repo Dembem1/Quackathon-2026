@@ -467,9 +467,30 @@ def subscriptions(username):
         (user_id,)
     ).fetchall()
 
-    conn.close()
-    return render_template("subscriptions.html", data=data, username=username)
+    total_subs = sum([s["cost"] for s in data])
 
+    conn.close()
+    return render_template("subscriptions.html", data=data, username=username, total_subs=total_subs)
+
+# DELETE SUBSCRIPTION
+@app.route("/delete_subscription/<username>/<int:sub_id>", methods=["POST"])
+def delete_subscription(username, sub_id):
+    user_id = get_user_id(username)
+
+    if not user_id:
+        return redirect(url_for("index"))
+
+    conn = get_db()
+
+    conn.execute(
+        "DELETE FROM subscriptions WHERE id=? AND user_id=?",
+        (sub_id, user_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("subscriptions", username=username))
 
 # TODO
 @app.route("/todo/<username>", methods=["GET", "POST"])

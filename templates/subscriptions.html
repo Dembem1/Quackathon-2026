@@ -12,6 +12,10 @@
     <div class="dashboard-header">
         <h1>Subscriptions</h1>
         <p>Manage your recurring monthly costs so there are no surprises.</p>
+        <p><strong>Total Monthly:</strong> ${{ total_subs }}</p>
+        {% if total_subs > 200 %}
+            <p class="warning">⚠️ High subscription spending</p>
+        {% endif %}
     </div>
 
     <div class="form-card" style="border-top-color: #BA827A;">
@@ -44,6 +48,10 @@
                     <div class="tx-amount" style="color: #BA827A;">
                         -${{ "{:,.2f}".format(s.cost|float) }} / mo
                     </div>
+
+                    <form method="POST" action="/delete_subscription/{{ username }}/{{ s.id }}">
+                        <button type="submit" class="btn-danger">Remove</button>
+                    </form>
                 </div>
             {% endfor %}
         {% else %}
@@ -51,6 +59,8 @@
                 No subscriptions logged yet. Your wallet is safe for now!
             </div>
         {% endif %}
+
+
     </div>
 
 </div>
