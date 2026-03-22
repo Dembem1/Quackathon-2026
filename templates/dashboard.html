@@ -36,7 +36,7 @@
     </div>
 
     <div class="streak-card">
-        <p>🔥 {{ streak }} day streak</p>
+        <p>{{ streak }} day streak</p>
     </div>
 </div>
 
@@ -48,9 +48,13 @@
     <canvas id="financeChart"></canvas>
     
     {% if expenses > income %}
-        <p class="warning">⚠️ You spent more than you earned</p>
+        <p class="warning">You spent more than you earned</p>
     {% else %}
-        <p class="good">💰 You're saving money</p>
+        <p class="good">You're saving money</p>
+    {% endif %}
+    <p>You save {{ (savings / income * 100) | round(1) if income > 0 else 0 }}% of your income</p>
+    {% if expenses > income %}
+    You are losing money this month
     {% endif %}
 
     <p>Subscriptions cost £{{ subscriptions }}/month</p>

@@ -230,11 +230,12 @@ def expenses(username):
                 (user_id, float(amount), category, datetime.utcnow().isoformat())
             )
 
-            # ✅ update balance
-            conn.execute(
-                "UPDATE users SET balance = balance - ? WHERE id=?",
-                (float(amount), user_id)
-            )
+            # update balance
+            conn.execute("""
+                UPDATE users
+                SET balance = balance - ?
+                WHERE id = ?
+            """, (amount, user_id))
 
             conn.commit()
 
@@ -301,6 +302,7 @@ def update_goal(username, goal_id):
 @app.route("/income/<username>", methods=["GET", "POST"])
 def income(username):
     user_id = get_user_id(username)
+
     if not user_id:
         return redirect(url_for("index"))
 
@@ -310,21 +312,40 @@ def income(username):
         amount = request.form.get("amount")
         saved = request.form.get("saved")
 
-        if amount is not None and saved is not None:
+        if amount and saved:
+            amount = float(amount)
+            saved = float(saved)
+
+            # ❗ safety check
+            if saved > amount:
+                flash("Saved amount cannot be greater than income", "danger")
+                return redirect(url_for("income", username=username))
+
+            # 1. save income record
             conn.execute(
                 "INSERT INTO income (user_id, amount, saved, date) VALUES (?, ?, ?, ?)",
-                (user_id, float(amount), float(saved), datetime.utcnow().isoformat())
+                (user_id, amount, saved, datetime.utcnow().isoformat())
             )
+
+            # 2. update user balance + savings
+            conn.execute("""
+                UPDATE users
+                SET balance = balance + ?,
+                    savings = savings + ?
+                WHERE id = ?
+            """, (amount, saved, user_id))
+
             conn.commit()
 
     data = conn.execute(
-        "SELECT * FROM income WHERE user_id=?",
+        "SELECT * FROM income WHERE user_id=? ORDER BY date DESC",
         (user_id,)
     ).fetchall()
 
     conn.close()
-    return render_template("income.html", data=data, username=username)
 
+    return render_template("income.html", data=data, username=username)
+    
 # GOALS
 @app.route("/goals/<username>", methods=["GET", "POST"])
 def goals(username):
