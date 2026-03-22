@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from datetime import datetime, timedelta
 import sqlite3
-from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret"
@@ -25,7 +25,8 @@ def init_db():
         email TEXT,
         password TEXT,
         balance REAL DEFAULT 0,
-        savings REAL DEFAULT 0
+        savings REAL DEFAULT 0,
+        last_active TEXT
     )
     """)
 
@@ -90,6 +91,40 @@ def get_user_id(username):
     conn.close()
     return user["id"] if user else None
 
+def update_streak(user_id):
+    conn = get_db()
+
+    user = conn.execute(
+        "SELECT streak, last_active FROM users WHERE id=?",
+        (user_id,)
+    ).fetchone()
+
+    now = datetime.utcnow()
+
+    if user:
+        last = user["last_active"]
+
+        if last:
+            last = datetime.fromisoformat(last)
+            diff = now - last
+
+            if diff < timedelta(days=1):
+                conn.close()
+                return
+            elif diff < timedelta(days=2):
+                streak = user["streak"] + 1
+            else:
+                streak = 1
+        else:
+            streak = 1
+
+        conn.execute(
+            "UPDATE users SET streak=?, last_active=? WHERE id=?",
+            (streak, now.isoformat(), user_id)
+        )
+        conn.commit()
+
+    conn.close()
 
 @app.context_processor
 def inject_user():
@@ -227,7 +262,7 @@ def expenses(username):
         if amount and category:
             conn.execute(
                 "INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)",
-                (user_id, float(amount), category, datetime.utcnow().isoformat())
+                (user_id, amount, category, datetime.utcnow().isoformat())
             )
 
             # update balance
@@ -268,6 +303,7 @@ def expenses(username):
         values=values
     )
 
+# UPDATE GOAL
 @app.route("/update_goal/<username>/<int:goal_id>", methods=["POST"])
 def update_goal(username, goal_id):
     user_id = get_user_id(username)

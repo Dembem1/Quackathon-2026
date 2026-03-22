@@ -43,6 +43,10 @@
 <h3 class="section-title">Insights</h3>
 
 <div class="insights">
+    <p>You save {{ (savings / income * 100) | round(1) if income > 0 else 0 }}% of your income</p>
+    {% if expenses > income %}
+    You are losing money this month
+    {% endif %}
     <h3 class="section-title">Income vs Expenses</h3>
 
     <canvas id="financeChart"></canvas>
@@ -52,10 +56,7 @@
     {% else %}
         <p class="good">You're saving money</p>
     {% endif %}
-    <p>You save {{ (savings / income * 100) | round(1) if income > 0 else 0 }}% of your income</p>
-    {% if expenses > income %}
-    You are losing money this month
-    {% endif %}
+    
 
     <p>Subscriptions cost £{{ subscriptions }}/month</p>
 </div>
