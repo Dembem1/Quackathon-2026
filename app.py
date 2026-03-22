@@ -900,7 +900,15 @@ def profile(username):
         message=message, level=user["streak"] // 3 + 1
     )
 
+@app.route("/benchmark/<username>")
+def benchmark(username):
+    user_id = get_user_id(username)
+    if not user_id:
+        return redirect(url_for("index"))
+    return render_template("benchmark.html", username=username)
+
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
+
