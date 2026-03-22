@@ -15,6 +15,11 @@
 
 <h3 class="section-title">Overview</h3>
 <div class="overview-grid">
+    <div class="balance-card">
+        <div class="stat-label">Balance</div>
+        <div class="stat-value">£{{ balance }}</div>
+    </div>
+
     <div class="stat-card income">
         <div class="stat-label">Total Income</div>
         <div class="stat-value">${{ income }}</div>
@@ -25,10 +30,30 @@
         <div class="stat-value">${{ expenses }}</div>
     </div>
 
-    <div class="stat-card subs">
-        <div class="stat-label">Subscriptions</div>
-        <div class="stat-value">${{ subscriptions }}</div>
+    <div class="stat-card savings">
+        <div class="stat-label">Savings</div>
+        <div class="stat-value">£{{ savings }}</div>
     </div>
+
+    <div class="streak-card">
+        <p>🔥 {{ streak }} day streak</p>
+    </div>
+</div>
+
+<h3 class="section-title">Insights</h3>
+
+<div class="insights">
+    <h3 class="section-title">Income vs Expenses</h3>
+
+    <canvas id="financeChart"></canvas>
+    
+    {% if expenses > income %}
+        <p class="warning">⚠️ You spent more than you earned</p>
+    {% else %}
+        <p class="good">💰 You're saving money</p>
+    {% endif %}
+
+    <p>Subscriptions cost £{{ subscriptions }}/month</p>
 </div>
 
 <h3 class="section-title">Quick Actions</h3>
@@ -38,4 +63,25 @@
     <a href="/goals/{{ current_user }}" class="action-btn">Set Goal</a>
 </div>
 </div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('financeChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Income', 'Expenses'],
+        datasets: [{
+            label: '£',
+            data: [{{ income }}, {{ expenses }}],
+            backgroundColor: ['#4CAF50', '#F44336']
+        }]
+    }
+});
+</script>
 {% endblock %}

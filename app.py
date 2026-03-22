@@ -21,6 +21,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
+        streak INTEGER DEFAULT 0,
         email TEXT,
         password TEXT,
         balance REAL DEFAULT 0,
@@ -158,38 +159,52 @@ def register():
 @app.route("/dashboard/<username>")
 def dashboard(username):
     user_id = get_user_id(username)
+
     if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
 
-    expenses = conn.execute(
+    # ✅ GET USER (THIS WAS MISSING)
+    user = conn.execute(
+        "SELECT * FROM users WHERE id=?",
+        (user_id,)
+    ).fetchone()
+
+    # expenses
+    expenses_data = conn.execute(
         "SELECT * FROM expenses WHERE user_id=?",
         (user_id,)
     ).fetchall()
 
-    income = conn.execute(
+    # income (optional, if still used)
+    income_data = conn.execute(
         "SELECT * FROM income WHERE user_id=?",
         (user_id,)
     ).fetchall()
 
-    subs = conn.execute(
+    # subscriptions
+    subs_data = conn.execute(
         "SELECT * FROM subscriptions WHERE user_id=?",
         (user_id,)
     ).fetchall()
 
-    total_exp = sum([e["amount"] for e in expenses])
-    total_inc = sum([i["amount"] for i in income])
-    sub_cost = sum([s["cost"] for s in subs])
-
     conn.close()
+
+    # calculations
+    total_exp = sum([e["amount"] for e in expenses_data])
+    total_inc = sum([i["amount"] for i in income_data])
+    sub_cost = sum([s["cost"] for s in subs_data])
 
     return render_template(
         "dashboard.html",
-        username=username,
-        expenses=total_exp,
+        current_user=username,
         income=total_inc,
-        subscriptions=sub_cost
+        expenses=total_exp,
+        subscriptions=sub_cost,
+        savings=user["savings"],
+        balance=user["balance"],
+        streak=user["streak"]
     )
 
 
@@ -249,7 +264,6 @@ def income(username):
 
     conn.close()
     return render_template("income.html", data=data, username=username)
-
 
 # GOALS
 @app.route("/goals/<username>", methods=["GET", "POST"])
