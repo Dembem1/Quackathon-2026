@@ -1,265 +1,304 @@
+/* --- BASE --- */
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background-color: #F9F9F9; /* Our Scandi 'Snow' background */
-    color: #2D2D2D; /* Anthracite text */
+    background-color: #F9F9F9;
+    color: #2D2D2D;
     margin: 0;
-    -webkit-font-smoothing: antialiased; /* Makes the font look sharper on screens */
+    -webkit-font-smoothing: antialiased;
 }
 
-/* --- NAVBAR STYLES --- */
+/* --- LAYOUT --- */
+.container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+/* --- NAVBAR --- */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #FFFFFF; 
+    background-color: #FFFFFF;
     padding: 16px 24px;
-    border-bottom: 1px solid #E8E5E1; /* Faint warm gray divider */
+    border-bottom: 1px solid #E8E5E1;
 }
 
 .nav-left h2 {
     font-size: 20px;
     font-weight: 600;
-    color: #2D2D2D; 
     margin: 0;
-    letter-spacing: -0.5px; 
 }
 
-/* Adds a nice Muted Ochre dot to the end of the logo */
 .nav-left h2::after {
     content: '.';
-    color: #C29B62; 
+    color: #C29B62;
 }
 
 .nav-right {
     display: flex;
-    gap: 16px; 
-    align-items: center;
+    gap: 16px;
 }
 
 .nav-right a {
     text-decoration: none;
-    color: #7A7A7A; /* Muted Gray for inactive links */
+    color: #7A7A7A;
     font-size: 14px;
-    font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.2s ease; 
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: 0.2s;
 }
 
 .nav-right a:hover {
-    color: #2D2D2D; 
-    background-color: #E5DFD5; /* Warm Stone background on hover */
+    color: #2D2D2D;
+    background-color: #E5DFD5;
 }
 
-/* Highlights whichever page the user is currently looking at */
 .nav-right a.active {
-    color: #C29B62; 
+    color: #C29B62;
     font-weight: 600;
 }
 
-/* --- DASHBOARD STYLES --- */
-
-.container {
-    max-width: 1040px; /* Constrains the width */
-    margin: 0 auto;    /* Centers it on the screen */
-    padding: 40px 24px;
-}
-
-.dashboard-header {
-    margin-bottom: 32px;
-}
-
+/* --- HEADERS --- */
 .dashboard-header h1 {
     font-size: 28px;
-    color: #2D2D2D; /* Anthracite */
     margin-bottom: 8px;
-    font-weight: 600;
 }
 
 .dashboard-header p {
-    color: #7A7A7A; /* Muted Gray */
-    font-size: 16px;
-    margin-top: 0;
+    color: #7A7A7A;
 }
 
 .section-title {
     font-size: 18px;
-    color: #2D2D2D;
-    margin-bottom: 16px;
-    margin-top: 40px;
-    font-weight: 500;
+    margin: 40px 0 16px;
 }
 
-/* Metric Cards Grid */
+/* --- CARDS GRID --- */
 .overview-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 24px;
+    gap: 20px;
 }
 
-.stat-card {
-    background-color: #FFFFFF; /* Pure White */
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(45, 45, 45, 0.04); /* Very soft shadow */
+/* --- CARDS --- */
+.stat-card,
+.balance-card,
+.streak-card {
+    background: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
-.footer {
-    display: flex;
-    justify-content: center;
+.balance-card {
+    border-top: 4px solid #2D2D2D;
 }
 
-/* Color-coded top borders for context */
-.stat-card.income { border-top: 4px solid #8CA38D; } /* Muted Forest */
-.stat-card.expense { border-top: 4px solid #BA827A; } /* Muted Brick */
-.stat-card.subs { border-top: 4px solid #C29B62; } /* Muted Ochre */
+.streak-card {
+    text-align: center;
+    font-weight: 600;
+    border-top: 4px solid #C29B62;
+}
+
+/* color coding */
+.stat-card.income { border-top: 4px solid #8CA38D; }
+.stat-card.expense { border-top: 4px solid #BA827A; }
+.stat-card.subs { border-top: 4px solid #C29B62; }
+.stat-card.savings { border-top: 4px solid #6B8E9B; }
 
 .stat-label {
-    font-size: 14px;
+    font-size: 13px;
     color: #7A7A7A;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .stat-value {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
-    color: #2D2D2D;
-    margin: 0;
 }
 
-/* Quick Action Buttons */
+/* --- ACTION BUTTONS --- */
 .action-grid {
     display: flex;
-    justify-content: center;
+    gap: 12px;
     flex-wrap: wrap;
-    gap: 16px;
 }
 
 .action-btn {
-    background-color: #C29B62; /* Muted Ochre */
-    color: #FFFFFF;
-    text-decoration: none;
-    padding: 12px 24px;
+    background: #C29B62;
+    color: white;
+    padding: 10px 18px;
     border-radius: 6px;
-    font-weight: 500;
+    text-decoration: none;
     font-size: 14px;
-    transition: background-color 0.2s ease;
+    transition: 0.2s;
 }
 
 .action-btn:hover {
-    background-color: #A6824D; /* Slightly darker ochre for hover */
+    background: #A6824D;
 }
 
-/* --- FORM STYLES --- */
+/* --- FORMS --- */
 .form-card {
-    background-color: #FFFFFF;
-    padding: 32px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(45, 45, 45, 0.04);
+    background: white;
+    padding: 28px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     margin-bottom: 40px;
-    border-top: 4px solid #BA827A; /* Muted Brick to indicate 'Expense' */
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .form-group label {
-    display: block;
     font-size: 14px;
     color: #7A7A7A;
-    margin-bottom: 8px;
-    font-weight: 500;
+    display: block;
+    margin-bottom: 6px;
 }
 
-/* Styles inputs and dropdowns identically */
 .form-control {
     width: 100%;
-    padding: 12px 16px;
-    font-size: 16px;
-    color: #2D2D2D;
-    background-color: #FFFFFF;
-    border: 1px solid #E8E5E1;
+    padding: 12px;
     border-radius: 6px;
-    font-family: inherit; /* Forces it to use Inter */
-    box-sizing: border-box; 
-    transition: border-color 0.2s ease;
+    border: 1px solid #E8E5E1;
+    font-size: 15px;
 }
 
 .form-control:focus {
     outline: none;
-    border-color: #C29B62; /* Muted Ochre focus ring */
+    border-color: #C29B62;
 }
 
-/* --- TRANSACTION LIST STYLES --- */
+/* --- BUTTONS --- */
+.btn-primary {
+    background: #2D2D2D;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #1A1A1A;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #BA827A;
+    color: #BA827A;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    display: block;
+}
+
+.btn-danger {
+    background: #BA827A;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* --- TRANSACTIONS --- */
 .transaction-list {
-    background-color: #FFFFFF;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(45, 45, 45, 0.04);
-    overflow: hidden; 
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .transaction-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 16px 24px;
+    padding: 16px 20px;
     border-bottom: 1px solid #E8E5E1;
 }
 
 .transaction-item:last-child {
-    border-bottom: none; /* Removes the line under the very last item */
+    border-bottom: none;
 }
 
 .tx-details h4 {
-    margin: 0 0 4px 0;
-    color: #2D2D2D;
-    font-size: 16px;
-    font-weight: 500;
+    margin: 0;
 }
 
 .tx-details p {
-    margin: 0;
+    margin: 4px 0 0;
+    font-size: 13px;
     color: #7A7A7A;
-    font-size: 14px;
 }
 
-.tx-amount {
-    color: #2D2D2D;
-    font-weight: 600;
-    font-size: 16px;
+/* --- INSIGHTS --- */
+.insights {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
 }
 
-.btn-primary {
-    display: inline-block;
-    background-color: #2D2D2D; /* Anthracite */
-    color: #FFFFFF;
-    text-align: center;
-    text-decoration: none;
-    padding: 12px 24px;
-    border-radius: 6px;
+.good {
+    color: #8CA38D;
     font-weight: 500;
-    font-size: 14px;
-    font-family: inherit; /* Ensures form buttons use Inter font */
-    border: none;
+}
+
+.warning {
+    color: #BA827A;
+    font-weight: 500;
+}
+
+/* --- TODO CHECKBOX --- */
+.checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #E8E5E1;
+    border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    width: 100%;
 }
 
-/* Hover state makes it slightly darker */
-.btn-primary:hover {
-    background-color: #1A1A1A; 
+/* --- EMPTY STATE --- */
+.empty-state {
+    padding: 30px;
+    text-align: center;
+    color: #7A7A7A;
 }
 
-/* Active state gives a subtle 'click' indent */
-.btn-primary:active {
-    transform: translateY(1px); 
+/* --- FLASH --- */
+.flash {
+    padding: 10px;
+    margin-bottom: 16px;
+    border-radius: 6px;
 }
 
+.flash.success { background: #D4EDDA; }
+.flash.warning { background: #FFF3CD; }
+.flash.danger { background: #F8D7DA; }
 
-.flash.success { background: lightgreen; }
-.flash.warning { background: orange; }
-.flash.danger { background: red; color: white; }
+/* --- SMALL UX IMPROVEMENTS --- */
+a {
+    transition: all 0.2s ease;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    transition: 0.2s;
+}
+
+.chart-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.stat-card.score {
+    border-top: 4px solid #6C8EAD; /* soft blue */
+}

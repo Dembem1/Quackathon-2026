@@ -15,7 +15,7 @@
     </div>
 
     <!-- MAIN PROFILE CARD -->
-    <div class="form-card" style="border-top-color: #2D2D2D; max-width: 600px; margin: 0 auto;">
+    <div class="form-card" style="border-top-color: #2D2D2D; max-width: 800px; margin: 0 auto;">
 
         <!-- USER -->
         <div style="margin-bottom: 20px;">
@@ -28,7 +28,7 @@
         <!-- STATS GRID -->
         <div class="overview-grid" style="grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px;">
 
-            <div class="stat-card">
+            <div class="stat-card balance">
                 <div class="stat-label">Balance</div>
                 <div class="stat-value">£{{ user.balance }}</div>
             </div>
@@ -38,27 +38,36 @@
                 <div class="stat-value">£{{ user.savings }}</div>
             </div>
 
-            <div class="stat-card">
+            <div class="stat-card tasks">
                 <div class="stat-label">Tasks Done</div>
                 <div class="stat-value">{{ tasks_done }}</div>
             </div>
 
-            <div class="streak-card">
-                🔥 {{ user.streak }} day streak
+            <div class="streak-card ">
+                <div class="stat-label">Day streak</div>
+                <div class="stat-value">{{ user.streak }}</div>
             </div>
 
         </div>
 
         <hr style="margin: 20px 0;">
 
+        <div style="text-align: center; margin-top: 20px;">
+            <h2>Financial Score</h2>
+            <div style="font-size: 36px; font-weight: 600;">
+                {{ score }}/100
+            </div>
+            <p style="color: #7A7A7A;">{{ message }}</p>
+        </div>
+
         <!-- STATUS MESSAGE -->
         <div style="text-align: center;">
             {% if user.balance < 0 %}
-                <p class="warning">⚠️ You're in negative balance — take control!</p>
+                <p class="warning">You're in negative balance — take control!</p>
             {% elif user.savings > user.balance * 0.3 %}
-                <p class="good">💰 Great job! You're building strong savings</p>
+                <p class="good">Great job! You're building strong savings</p>
             {% else %}
-                <p>📊 Keep going — you're improving your finances</p>
+                <p>Keep going — you're improving your finances</p>
             {% endif %}
         </div>
 

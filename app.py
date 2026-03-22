@@ -231,17 +231,60 @@ def dashboard(username):
     total_exp = sum([e["amount"] for e in expenses_data])
     total_inc = sum([i["amount"] for i in income_data])
     sub_cost = sum([s["cost"] for s in subs_data])
+    # avoid division by zero
+    food_percent = 0
+    subs_percent = 0
+
+    # category breakdown for food
+    food_total = sum([e["amount"] for e in expenses_data if e["category"] == "Food & Dining"])
+
+    if total_exp > 0:
+        food_percent = round((food_total / total_exp) * 100)
+        subs_percent = round((sub_cost / total_exp) * 100)
+
+    # potential savings (if cancel subs)
+    potential_savings = sub_cost
+
+    # FINANCIAL SCORE (0–100)
+    score = 0
+
+    # simple scoring logic
+    if total_inc > 0:
+        savings_rate = user["savings"] / total_inc
+        if savings_rate > 0.2:
+            score += 40
+        elif savings_rate > 0.1:
+            score += 25
+        else:
+            score += 10
+
+    if total_inc > total_exp:
+        score += 30
+    else:
+        score += 10
+
+    if user["streak"] > 5:
+        score += 20
+    else:
+        score += 10
+
+    # clamp to 100
+    score = min(score, 100)
 
     return render_template(
-        "dashboard.html",
-        current_user=username,
-        income=total_inc,
-        expenses=total_exp,
-        subscriptions=sub_cost,
-        savings=user["savings"],
-        balance=user["balance"],
-        streak=user["streak"]
-    )
+    "dashboard.html",
+    current_user=username,
+    income=total_inc,
+    expenses=total_exp,
+    subscriptions=sub_cost,
+    savings=user["savings"],
+    balance=user["balance"],
+    streak=user["streak"],
+    food_percent=food_percent,
+    subs_percent=subs_percent,
+    potential_savings=potential_savings,
+    score=score
+)
 
 
 # EXPENSES
@@ -579,19 +622,28 @@ def learn(username):
 @app.route("/profile/<username>")
 def profile(username):
     user_id = get_user_id(username)
-
     if not user_id:
         return redirect(url_for("index"))
 
     conn = get_db()
 
-    # user data
     user = conn.execute(
         "SELECT * FROM users WHERE id=?",
         (user_id,)
     ).fetchone()
 
-    # total completed tasks
+    # get income + expenses
+    income_data = conn.execute(
+        "SELECT * FROM income WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
+    expenses_data = conn.execute(
+        "SELECT * FROM expenses WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+
+    # tasks done
     tasks_done = conn.execute(
         "SELECT COUNT(*) as count FROM todo WHERE user_id=? AND completed=1",
         (user_id,)
@@ -599,18 +651,46 @@ def profile(username):
 
     conn.close()
 
-    # simple performance message
-    if user["balance"] > 500:
-        message = "You're doing great 💪"
-    elif user["balance"] > 0:
-        message = "Good progress 👍"
+    total_inc = sum([i["amount"] for i in income_data])
+    total_exp = sum([e["amount"] for e in expenses_data])
+
+    # --- SAME SCORE LOGIC ---
+    score = 0
+
+    if total_inc > 0:
+        savings_rate = user["savings"] / total_inc
+        if savings_rate > 0.2:
+            score += 40
+        elif savings_rate > 0.1:
+            score += 25
+        else:
+            score += 10
+
+    if total_inc > total_exp:
+        score += 30
     else:
-        message = "Let's improve your finances 🚀"
+        score += 10
+
+    if user["streak"] > 5:
+        score += 20
+    else:
+        score += 10
+
+    score = min(score, 100)
+
+    # simple feedback text
+    if score > 75:
+        message = "You're in great financial shape!"
+    elif score > 50:
+        message = "You're doing well, keep improving!"
+    else:
+        message = "Needs attention — you can improve your habits."
 
     return render_template(
         "profile.html",
         user=user,
         username=username,
+        score=score,
         tasks_done=tasks_done,
         message=message, level=user["streak"] // 3 + 1
     )

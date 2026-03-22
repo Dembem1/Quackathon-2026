@@ -15,7 +15,7 @@
 
 <h3 class="section-title">Overview</h3>
 <div class="overview-grid">
-    <div class="balance-card">
+    <div class="stat-card balance-card">
         <div class="stat-label">Balance</div>
         <div class="stat-value">£{{ balance }}</div>
     </div>
@@ -35,7 +35,12 @@
         <div class="stat-value">£{{ savings }}</div>
     </div>
 
-    <div class="streak-card">
+    <div class="stat-card score">
+        <div class="stat-label">Financial Score</div>
+        <div class="stat-value">{{ score }}/100</div>
+    </div>
+
+    <div class="stat-card streak-card">
         <p>{{ streak }} day streak</p>
     </div>
 </div>
@@ -59,6 +64,20 @@
     
 
     <p>Subscriptions cost £{{ subscriptions }}/month</p>
+</div>
+
+<h3 class="section-title">Insights</h3>
+
+<div class="insights">
+    {% if expenses > income %}
+        <p class="warning">⚠️ You spent more than you earned</p>
+    {% else %}
+        <p class="good">💰 You're saving money</p>
+    {% endif %}
+
+    <p>You spent {{ food_percent }}% on food</p>
+    <p>Subscriptions are {{ subs_percent }}% of your expenses</p>
+    <p>You could save £{{ potential_savings }} / month by cutting subscriptions</p>
 </div>
 
 <h3 class="section-title">Quick Actions</h3>
