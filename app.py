@@ -132,6 +132,146 @@ def inject_user():
     username = request.view_args.get("username") if request.view_args else None
     return dict(current_user=username)
 
+# ─── TRACK DATA ─────────────────────────────────────────────
+TRACKS = {
+    "saving": {
+        "title": "Saving",
+        "theory": [
+            {
+                "title": "Pay Yourself First",
+                "body": "Saving isn’t what’s left over — it’s what you take first. Even small amounts build habits.",
+                "highlight": "Pay yourself first."
+            },
+            {
+                "title": "50/30/20 Rule",
+                "body": "Split income into needs (50%), wants (30%), savings (20%).",
+                "highlight": "50 needs · 30 wants · 20 savings"
+            }
+        ],
+        "quiz": [
+            {
+                "q": "What does 'pay yourself first' mean?",
+                "opts": [
+                    "Spend first",
+                    "Save before spending",
+                    "Only save leftovers"
+                ],
+                "a": 1
+            },
+            {
+                "q": "What is 20% in the rule?",
+                "opts": [
+                    "Rent",
+                    "Savings",
+                    "Food"
+                ],
+                "a": 1
+            }
+        ]
+    },
+
+    "investing": {
+        "title": "Investing",
+        "theory": [
+            {
+                "title": "Compound Interest",
+                "body": "Your money earns money, then that earns more.",
+                "highlight": "Start early."
+            },
+            {
+                "title": "Index Funds",
+                "body": "Own many companies instead of picking one.",
+                "highlight": "Diversify."
+            }
+        ],
+        "quiz": [
+            {
+                "q": "What is compound interest?",
+                "opts": [
+                    "Flat interest",
+                    "Interest on interest",
+                    "Bank fee"
+                ],
+                "a": 1
+            },
+            {
+                "q": "What is an index fund?",
+                "opts": [
+                    "One stock",
+                    "Many companies",
+                    "Savings account"
+                ],
+                "a": 1
+            }
+        ]
+    },
+
+    "credit": {
+        "title": "Credit",
+        "theory": [
+            {
+                "title": "Credit Score",
+                "body": "Shows how reliable you are with money.",
+                "highlight": "Pay on time."
+            }
+        ],
+        "quiz": [
+            {
+                "q": "What improves credit score?",
+                "opts": [
+                    "Late payments",
+                    "On-time payments",
+                    "Ignoring bills"
+                ],
+                "a": 1
+            }
+        ]
+    },
+
+    "subscriptions": {
+        "title": "Subscriptions",
+        "theory": [
+            {
+                "title": "Subscription Creep",
+                "body": "Small payments add up quickly.",
+                "highlight": "Track everything."
+            }
+        ],
+        "quiz": [
+            {
+                "q": "What is subscription creep?",
+                "opts": [
+                    "One big payment",
+                    "Lots of small subscriptions",
+                    "Free trial"
+                ],
+                "a": 1
+            }
+        ]
+    },
+
+    "rent": {
+        "title": "Rent & Bills",
+        "theory": [
+            {
+                "title": "30% Rule",
+                "body": "Don’t spend more than 30% on rent.",
+                "highlight": "Stay under 30%."
+            }
+        ],
+        "quiz": [
+            {
+                "q": "Recommended rent %?",
+                "opts": [
+                    "10%",
+                    "30%",
+                    "70%"
+                ],
+                "a": 1
+            }
+        ]
+    }
+}
 
 # ---------------- ROUTES ----------------
 
@@ -271,6 +411,31 @@ def dashboard(username):
     # clamp to 100
     score = min(score, 100)
 
+    # personalised tips
+    tips = []
+    # ❗ spending too much
+    if total_exp > total_inc:
+        tips.append("You're spending more than you earn. Try reducing non-essential expenses.")
+
+    # ❗ low savings
+    if user["savings"] < total_inc * 0.2:
+        tips.append("Try to save at least 20% of your income.")
+
+    # ❗ high subscriptions
+    if sub_cost > total_inc * 0.15:
+        tips.append("Your subscriptions are high. Consider cancelling unused ones.")
+
+    # ❗ food spending
+    food_total = sum([e["amount"] for e in expenses_data if e["category"] == "Food & Dining"])
+    if total_exp > 0 and (food_total / total_exp) > 0.4:
+        tips.append("You spend a lot on food. Cooking at home could save money.")
+
+    tips = tips[:3]  # show only top 3
+
+    # fallback
+    if not tips:
+        tips.append("You're doing great! Keep managing your finances wisely.")
+
     return render_template(
     "dashboard.html",
     current_user=username,
@@ -283,7 +448,7 @@ def dashboard(username):
     food_percent=food_percent,
     subs_percent=subs_percent,
     potential_savings=potential_savings,
-    score=score
+    score=score, tips=tips
 )
 
 
@@ -611,12 +776,52 @@ def complete_task(username, task_id):
 # LEARN
 @app.route("/learn/<username>")
 def learn(username):
-    user_id = get_user_id(username)
-    if not user_id:
-        return redirect(url_for("index"))
+    return render_template("learn.html", current_user=username)
+  
+# LEARN TOPIC
+@app.route("/learn/<username>/<topic_id>")
+def learn_topic(username, topic_id):
+    topic = TRACKS.get(topic_id)
+    if not topic:
+        return "Topic not found"
+    return render_template("learn_topic.html", topic=topic, current_user=username, topic_id=topic_id)
 
-    return render_template("learn.html", username=username)
+# HANDLE QUIZ 
+@app.route("/quiz/<username>/<topic_id>", methods=["GET", "POST"])
+def quiz(username, topic_id):
+    topic = TRACKS.get(topic_id)
 
+    if not topic:
+        return "Topic not found"
+
+    results = []
+    score = 0
+
+    if request.method == "POST":
+        for i, q in enumerate(topic["quiz"]):
+            selected = request.form.get(f"q{i}")
+            correct = q.get("a")
+
+            is_correct = selected is not None and int(selected) == correct
+
+            if is_correct:
+                score += 1
+
+            results.append({
+                "question": q["q"],
+                "selected": int(selected) if selected else None,
+                "correct": correct,
+                "options": q["opts"],
+                "is_correct": is_correct
+            })
+
+    return render_template(
+        "quiz.html",
+        topic=topic,
+        current_user=username,
+        results=results,
+        score=score
+    )
 
 # PROFILE
 @app.route("/profile/<username>")

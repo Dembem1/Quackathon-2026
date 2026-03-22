@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block title %}Quiz{% endblock %}
+
+{% block navbar %}
+    {% include "navbar.html" %}
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ topic.title }} Quiz</h1>
+<form method="POST">
+
+    {% for q in topic.quiz %}
+        {% set q_index = loop.index0 %}
+
+        <div class="card">
+            <p><b>{{ q.q }}</b></p>
+
+            {% for opt in q.opts %}
+                <label>
+                    <input 
+                        type="radio" 
+                        name="q{{ q_index }}" 
+                        value="{{ loop.index0 }}"
+                        required
+                    >
+                    {{ opt }}
+                </label>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn-primary">Submit</button>
+</form>
+
+
+{% if results %}
+<hr>
+
+<h2>Your Results: {{ score }}/{{ topic.quiz|length }}</h2>
+
+{% for r in results %}
+    <div class="card result-card {{ 'correct' if r.is_correct else 'wrong' }}">
+        <p><b>{{ r.question }}</b></p>
+
+        <p>
+            Your answer:
+            <span class="{{ 'good' if r.is_correct else 'warning' }}">
+                {{ r.options[r.selected] if r.selected is not none else "No answer" }}
+            </span>
+        </p>
+
+        {% if not r.is_correct %}
+            <p>
+                Correct answer:
+                <span class="good">
+                    {{ r.options[r.correct] }}
+                </span>
+            </p>
+        {% endif %}
+    </div>
+{% endfor %}
+
+{% endif %}
+
+{% endblock %}

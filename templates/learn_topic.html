@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}Learn Topic{% endblock %}
+
+{% block navbar %}
+    {% include "navbar.html" %}
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ topic.title }}</h1>
+
+{% for card in topic.theory %}
+    <div class="card">
+        <h3>{{ card.title }}</h3>
+        <p>{{ card.body }}</p>
+        <b>{{ card.highlight }}</b>
+    </div>
+{% endfor %}
+
+<a href="{{ url_for('quiz', username=current_user, topic_id=topic_id) }}" class="learn-btn">
+    Start Quiz 
+</a>
+
+{% endblock %}

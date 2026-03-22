@@ -48,7 +48,9 @@
 
     <!-- CHART -->
     <h3 class="section-title">Spending by Category</h3>
-    <canvas id="categoryChart"></canvas>
+    <div class="chart-card small-chart">
+        <canvas id="categoryChart"></canvas>
+    </div>
 
     <!-- LIST -->
     <h3 class="section-title">Recent Expenses</h3>
@@ -69,7 +71,7 @@
         {% else %}
             <div class="empty-state" style="padding: 32px; text-align: center; color: #7A7A7A;">
                 <p>No expenses yet.</p>
-                <p>Start tracking to understand your spending 💡</p>
+                <p>Start tracking to understand your spending </p>
             </div>
         {% endif %}
     </div>

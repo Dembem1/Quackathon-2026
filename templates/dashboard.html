@@ -83,6 +83,13 @@
     {% endif %}
 </div>
 
+<h3 class="section-title">Personal Tips</h3>
+<div class="insights">
+    {% for tip in tips %}
+        <p>{{ tip }}</p>
+    {% endfor %}
+</div>
+
 <h3 class="section-title">Quick Actions</h3>
 <div class="action-grid">
     <a href="/expenses/{{ current_user }}" class="action-btn">Add Expense</a>
